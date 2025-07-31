@@ -1,35 +1,20 @@
-# Git-Remote-Punch transport
+# Punch Git
 
-Git remote helper for hyperswarm git transport.
+Git remote helper P2P remote - no server, just peers
 
-``` bash
-npm install -g https://github.com/holepunchto/git-remote-punch-transport
-git clone punch://public-key:repository
+## Development
+
+Quick setup for testing, link the file to a folder on your path so you can use with git:
+```bash
+sudo ln -s $(pwd)/index.js /usr/local/bin/git-remote-punch
 ```
 
-## Server
+Git will automatically look for `git-remote-<protocol>` when accessing a remote.
 
-The client of this remote helper depends on the repository server running git-punch-server. This server is responsible for packet negotiation and Git daemon forwarding.
+Add a test remote with:
 
-To start the server, run:
-
-``` bash
-  git-punch-server start [--seed=<key-pair-seed>] [--bootstrap=<bootstrap-url>] [--basedir=<directory>]
-  # Listening on key: 3f9b09e0831b13e755d4b0af079a5b56f38efed122d561af5069e1e35cf2a1c2
-
+```bash
+git remote add punch punch://<any value> 
 ```
 
-## Example
-
-``` bash
-  npm install -g https://github.com/holepunchto/git-remote-punch-transport
-  cd /tmp
-  mkdir test-repository
-  cd test-repository
-  git init --bare
-  touch git-daemon-export-ok
-  git-punch-server start --basedir=/tmp
-  # Listening on key: <public-key>
-  git clone punch://<public-key>/test-repository
-```
-
+The `<any-value>` will be replaced with a public key for your repo soon.
