@@ -65,28 +65,32 @@ const main = async (args) => {
         }
         break
       }
-      case 'push':
-        // TODO: move to punch.js
-        punch.addPushRefs(line.split(' ')[1])
+      case 'push':{
+        const ref = line.split(' ')[1]
+
+        punch.addPushRefs(ref)
         break
+      }
       case 'fetch': {
         await punch.prepareFetch(line.replace('fetch ', ''))
 
         break
       }
-      case '':
+      case '':{
         if (await punch.hasPendingFetch()) {
           await punch.fetch()
         } else {
           await punch.push()
         }
         break
+      }
       default:
         console.error('Unexpected message:', line)
         process.exit()
     }
   }
 
+  punch._debug('Closing punch')
   await punch.close()
 }
 
