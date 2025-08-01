@@ -53,7 +53,7 @@ const main = async (args) => {
           remoteRefs = await punch.list()
         } else {
           // list for-push
-          punch.listForPush()
+          await punch.listForPush()
         }
         break
       }
@@ -69,8 +69,11 @@ const main = async (args) => {
       }
       case '':
         // TODO: move to punch.js
-        if (wantedRefs.length > 0) punch.fetch(wantedRefs)
-        else punch.push()
+        if (wantedRefs.length > 0) {
+          await punch.fetch(wantedRefs)
+        } else {
+          await punch.push()
+        }
         break
       default:
         console.error('Unexpected message:', line)
@@ -78,7 +81,7 @@ const main = async (args) => {
     }
   }
 
-  // await punch.close()
+  await punch.close()
 }
 
 main(argv)
