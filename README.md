@@ -18,3 +18,10 @@ git remote add punch punch://<any value>
 ```
 
 The `<any-value>` will be replaced with a public key for your repo soon.
+
+## ToDo
+- [ ] Create terminal app to wrap main logic
+- [ ] Move index.js to call pear and start seeding
+- [ ] Implement fetch
+- [ ] Create TUI (flag or connect to worker)
+- [ ] Flesh out todos 
