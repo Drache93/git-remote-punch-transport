@@ -7,6 +7,10 @@ const { PunchGit } = require('./lib/punch.js')
 
 // TODO: use this
 const argv = process.argv.slice(0)
+// args[0] == node
+// args[1] == git-remote-punch location
+const remote = argv[2]
+const url = argv[3]
 // const url = argv[3]
 // const config = decodeUrl(url)
 
@@ -19,7 +23,10 @@ const capabilities = () => {
 const main = async (args) => {
   const crlfDelay = 30000
 
-  const punch = new PunchGit('./punch')
+  const punch = new PunchGit({
+    remote,
+    url
+  })
 
   await punch.ready()
 
@@ -41,6 +48,9 @@ const main = async (args) => {
             case 'progress':
               punch.setProgress(line.split(' ')[2] === 'true')
               break
+            case 'cloning':
+              punch.setCloning(line.split(' ')[2] === 'true')
+              break
           }
           process.stdout.write('ok\n')
         }
@@ -60,7 +70,7 @@ const main = async (args) => {
         punch.addPushRefs(line.split(' ')[1])
         break
       case 'fetch': {
-        await punch.prepareFetch(line.split(' '))
+        await punch.prepareFetch(line.replace('fetch ', ''))
 
         break
       }
