@@ -18,8 +18,6 @@ const capabilities = () => {
 
 const main = async (args) => {
   const crlfDelay = 30000
-  let remoteRefs = []
-  const wantedRefs = []
 
   const punch = new PunchGit('./punch')
 
@@ -50,7 +48,7 @@ const main = async (args) => {
       case 'list':{
         // list
         if (line === 'list') {
-          remoteRefs = await punch.list()
+          await punch.listAndStoreRefs()
         } else {
           // list for-push
           await punch.listForPush()
@@ -62,15 +60,13 @@ const main = async (args) => {
         punch.addPushRefs(line.split(' ')[1])
         break
       case 'fetch': {
-        // TODO: move to punch.js
-        wantedRefs.push(remoteRefs.find(ref => ref.name === line.split(' ')[2]))
+        await punch.prepareFetch(line.split(' '))
 
         break
       }
       case '':
-        // TODO: move to punch.js
-        if (wantedRefs.length > 0) {
-          await punch.fetch(wantedRefs)
+        if (await punch.hasPendingFetch()) {
+          await punch.fetch()
         } else {
           await punch.push()
         }
