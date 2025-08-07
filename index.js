@@ -72,12 +72,12 @@ const main = async (args) => {
         break
       }
       case 'fetch': {
-        await punch.prepareFetch(line.replace('fetch ', ''))
+        punch.prepareFetch(line.replace('fetch ', ''))
 
         break
       }
       case '':{
-        if (await punch.hasPendingFetch()) {
+        if (punch.hasPendingFetch()) {
           await punch.fetch()
         } else {
           await punch.push()
