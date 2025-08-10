@@ -1,0 +1,45 @@
+{
+  "version": 0,
+  "offset": 0,
+  "schema": [
+    {
+      "name": "refs",
+      "namespace": "punch-remote",
+      "id": 0,
+      "type": 1,
+      "indexes": [
+        "@punch-remote/refs-by-name"
+      ],
+      "schema": "@punch-remote/refs",
+      "derived": false,
+      "key": [
+        "oid"
+      ],
+      "trigger": null
+    },
+    {
+      "name": "config",
+      "namespace": "punch-remote",
+      "id": 1,
+      "type": 1,
+      "indexes": [],
+      "schema": "@punch-remote/config",
+      "derived": false,
+      "key": [
+        "blobsKey"
+      ],
+      "trigger": null
+    },
+    {
+      "name": "refs-by-name",
+      "namespace": "punch-remote",
+      "id": 2,
+      "type": 2,
+      "collection": "@punch-remote/refs",
+      "unique": false,
+      "key": [
+        "name"
+      ]
+    }
+  ]
+}

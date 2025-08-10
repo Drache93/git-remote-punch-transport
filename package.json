@@ -57,6 +57,7 @@
     "bare-path": "^3.0.0",
     "bare-process": "^4.2.1",
     "bare-readline": "^1.0.9",
+    "bare-string-decoder": "^1.0.0",
     "bare-subprocess": "^5.1.0",
     "bare-tty": "^5.0.2",
     "compact-encoding": "^2.16.1",

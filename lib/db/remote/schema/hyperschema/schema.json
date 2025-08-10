@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "schema": [
+    {
+      "name": "config",
+      "namespace": "punch-remote",
+      "compact": true,
+      "flagsPosition": -1,
+      "fields": [
+        {
+          "name": "blobsKey",
+          "required": true,
+          "type": "buffer",
+          "version": 1
+        },
+        {
+          "name": "blobsDiscoveryKey",
+          "required": true,
+          "type": "buffer",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "refs",
+      "namespace": "punch-remote",
+      "compact": true,
+      "flagsPosition": 2,
+      "fields": [
+        {
+          "name": "oid",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "name",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "objectKeys",
+          "array": true,
+          "type": "json",
+          "version": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": 0,
+  "offset": 0,
+  "schema": [
+    {
+      "name": "repos",
+      "namespace": "punch-local",
+      "id": 0,
+      "type": 1,
+      "indexes": [],
+      "schema": "@punch-local/repos",
+      "derived": false,
+      "key": [
+        "name"
+      ],
+      "trigger": null
+    }
+  ]
+}
