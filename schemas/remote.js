@@ -25,6 +25,38 @@ punch.register({
   ]
 })
 
+punch.register({
+  name: 'objects',
+  compact: true,
+  fields: [
+    {
+      name: 'oid',
+      type: 'string',
+      required: true
+    },
+    {
+      name: 'blobId',
+      type: 'json',
+      required: true
+    },
+    {
+      name: 'type',
+      type: 'string',
+      required: true
+    },
+    {
+      name: 'size',
+      type: 'uint',
+      required: true
+    },
+    {
+      name: 'refOid',
+      type: 'string',
+      required: true
+    }
+  ]
+})
+
 // Define 'members'
 punch.register({
   name: 'refs',
@@ -39,11 +71,6 @@ punch.register({
       name: 'name',
       type: 'string',
       required: true
-    },
-    {
-      name: 'objectKeys',
-      type: 'json',
-      array: true
     }
   ]
 })
@@ -54,6 +81,13 @@ const db = HyperDB.from(SCHEMA_DIR, DB_DIR)
 const punchDb = db.namespace('punch-remote')
 
 // Define collections of structs
+
+punchDb.collections.register({
+  name: 'objects',
+  schema: '@punch-remote/objects',
+  key: ['oid']
+})
+
 punchDb.collections.register({
   name: 'refs',
   schema: '@punch-remote/refs',
@@ -70,6 +104,12 @@ punchDb.indexes.register({
   name: 'refs-by-name',
   collection: '@punch-remote/refs',
   key: ['name']
+})
+
+punchDb.indexes.register({
+  name: 'objects-by-refOid',
+  collection: '@punch-remote/objects',
+  key: ['refOid']
 })
 
 HyperDB.toDisk(db)

@@ -22,10 +22,48 @@
       ]
     },
     {
+      "name": "objects",
+      "namespace": "punch-remote",
+      "compact": true,
+      "flagsPosition": -1,
+      "fields": [
+        {
+          "name": "oid",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "blobId",
+          "required": true,
+          "type": "json",
+          "version": 1
+        },
+        {
+          "name": "type",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "size",
+          "required": true,
+          "type": "uint",
+          "version": 1
+        },
+        {
+          "name": "refOid",
+          "required": true,
+          "type": "string",
+          "version": 1
+        }
+      ]
+    },
+    {
       "name": "refs",
       "namespace": "punch-remote",
       "compact": true,
-      "flagsPosition": 2,
+      "flagsPosition": -1,
       "fields": [
         {
           "name": "oid",
@@ -37,12 +75,6 @@
           "name": "name",
           "required": true,
           "type": "string",
-          "version": 1
-        },
-        {
-          "name": "objectKeys",
-          "array": true,
-          "type": "json",
           "version": 1
         }
       ]

@@ -47,6 +47,10 @@
     "readline": {
       "bare": "bare-readline",
       "default": "readline"
+    },
+    "tty": {
+      "bare": "bare-tty",
+      "default": "tty"
     }
   },
   "dependencies": {
