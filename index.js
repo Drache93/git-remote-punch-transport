@@ -33,7 +33,12 @@ const main = async (args) => {
     ...config
   })
 
-  await punch.ready()
+  try {
+    await punch.ready()
+  } catch (error) {
+    process.stderr.write(`${error.message}\n`)
+    process.exit(1)
+  }
 
   for await (const line of readline.createInterface({ input: process.stdin, crlfDelay })) {
     const command = line.split(' ')[0]
