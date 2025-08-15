@@ -6,7 +6,7 @@
     "name": "git-remote-punch",
     "type": "terminal"
   },
-  "main": "run.js",
+  "main": "runtime.js",
   "bin": {
     "git-remote-punch": "index.js"
   },

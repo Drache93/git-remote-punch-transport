@@ -1,9 +1,3 @@
-'use strict'
-
-// rigging substitute for "pear run" (allows for bare run ....)
-if (global.Bare.argv.some((arg) => arg === '--trusted') === false) throw new Error('--trusted flag expected')
-
-
 const readline = require('readline')
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
