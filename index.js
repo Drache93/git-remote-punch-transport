@@ -1,107 +1,27 @@
-#!/usr/bin/env node
+#!/usr/bin/env bare
 
-const readline = require('readline')
-const cenc = require('compact-encoding')
-const b4a = require('b4a')
-const { PunchGit } = require('./lib/punch.js')
-const { repoConfig } = require('./lib/messages.js')
+/* globals Bare */
+const process = require('process');
 
-// const GIT_PUNCH_SERVER_NAMESPACE = 'git-remote-punch'
+const run = require("pear-run")
 
-// TODO: use this
-const argv = process.argv.slice(0)
-// args[0] == node
-// args[1] == git-remote-punch location
-const remote = argv[2]
-const url = argv[3]
+const ARGV = global.Bare.argv.slice(1)
+const punchGitArgs = global.Bare.argv.slice(2)
 
-// Get the config from the url
-const configBuffer = b4a.from(url.replace('punch://', ''), 'hex')
-const config = cenc.decode(repoConfig, configBuffer) || {}
-
-const capabilities = () => {
-  process.stdout.write('option\nfetch\npush\nlist\n\n')
-}
-
-// Git communicates with the remote helper using new line based protocol, check https://git-scm.com/docs/gitremote-helpers
-
-const main = async (args) => {
-  const crlfDelay = 30000
-
-  const punch = new PunchGit({
-    remote,
-    ...config
-  })
-
-  try {
-    await punch.ready()
-  } catch (error) {
-    process.stderr.write(`${error.message}\n`)
-    process.exit(1)
+class API {
+    static RUNTIME = "pear"
+    static RTI = {}
+    static RUNTIME_ARGV = []
+    app = {}
   }
 
-  for await (const line of readline.createInterface({ input: process.stdin, crlfDelay })) {
-    const command = line.split(' ')[0]
-    punch._verbose('Line: ' + line)
+const runtimeDir = global.Bare.argv[1].split("/").slice(0, -1).join("/")
+// TODO: replace to pear url
+const link = "pear://cgnph3qsrfk55pcpzyd3ab7rheqd9jjcxfam3ypmu9989q1xk3zy"
+global.Bare.argv.length = 1
+global.Bare.argv.push('run', link)
+global.Pear = new API()
 
-    switch (command) {
-      case 'capabilities':
-        capabilities()
-        break
-      case 'option':
-        {
-          const option = line.split(' ')[1]
-          switch (option) {
-            case 'verbosity':
-              punch.setVerbosity(line.split(' ')[2])
-              break
-            case 'progress':
-              punch.setProgress(line.split(' ')[2] === 'true')
-              break
-            case 'cloning':
-              punch.setCloning(line.split(' ')[2] === 'true')
-              break
-          }
-          process.stdout.write('ok\n')
-        }
-        break
-      case 'list':{
-        // list
-        if (line === 'list') {
-          await punch.listAndStoreRefs()
-        } else {
-          // list for-push
-          await punch.listForPush()
-        }
-        break
-      }
-      case 'push':{
-        const ref = line.split(' ')[1]
 
-        punch.addPushRefs(ref)
-        break
-      }
-      case 'fetch': {
-        punch.prepareFetch(line.replace('fetch ', ''))
-
-        break
-      }
-      case '':{
-        if (punch.hasPendingFetch()) {
-          await punch.fetch()
-        } else {
-          await punch.push()
-        }
-        break
-      }
-      default:
-        console.error('Unexpected message:', line)
-        process.exit()
-    }
-  }
-
-  punch._debug('Closing punch')
-  await punch.close()
-}
-
-main(argv)
+// ? run direct and let it stdout/stderr itself?
+run(link, punchGitArgs)

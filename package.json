@@ -6,9 +6,9 @@
     "name": "git-remote-punch",
     "type": "terminal"
   },
-  "main": "runtime.js",
+  "main": "run.js",
   "bin": {
-    "git-remote-punch": "runtime.js"
+    "git-remote-punch": "index.js"
   },
   "scripts": {
     "test": "brittle test/index.test.js",
@@ -54,7 +54,6 @@
     }
   },
   "dependencies": {
-    "@hyperswarm/rpc": "^3.1.0",
     "b4a": "^1.6.7",
     "bare-fs": "^4.1.6",
     "bare-os": "^3.6.1",
@@ -64,7 +63,6 @@
     "bare-string-decoder": "^1.0.0",
     "bare-subprocess": "^5.1.0",
     "bare-tty": "^5.0.2",
-    "charsm": "^0.2.0",
     "compact-encoding": "^2.16.1",
     "compact-encoding-net": "^1.2.0",
     "compact-encoding-struct": "^1.3.0",
@@ -76,14 +74,10 @@
     "hyperdht": "^6.6.0",
     "hyperschema": "^1.13.0",
     "hyperswarm": "^4.12.1",
-    "keypear": "^1.1.1",
-    "punch-connection-encoding": "github:holepunchto/punch-connection-encoding",
-    "ready-resource": "^1.1.2",
-    "simple-hyperproxy": "^0.0.6",
-    "sodium-universal": "^4.0.0",
-    "streamx": "^2.13.2",
-    "subcommand": "^2.1.1",
-    "which-runtime": "^1.3.0"
+    "pear-inspect": "^1.2.5",
+    "pear-pipe": "^1.0.1",
+    "pear-run": "^1.0.0",
+    "ready-resource": "^1.1.2"
   },
   "directories": {
     "lib": "lib",
