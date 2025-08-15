@@ -2,14 +2,27 @@
 
 Git remote helper P2P remote - no server, just peers
 
-## Development
+## Installation
 
-Quick setup for testing, link the file to a folder on your path so you can use with git:
+Install the git remote helper globally:
+
 ```bash
-sudo ln -s $(pwd)/index.js /usr/local/bin/git-remote-punch
+npm i -g https://github.com/Drache93/git-remote-punch-transport
 ```
 
-Git will automatically look for `git-remote-<protocol>` when accessing a remote.
+This installs `git-remote-punch` which git will automatically use when accessing punch:// remotes.
+
+## Usage
+
+### Running the UI
+
+Start the user interface with:
+
+```bash
+pear run pear://cgnph3qsrfk55pcpzyd3ab7rheqd9jjcxfam3ypmu9989q1xk3zy
+```
+
+### Adding a Remote
 
 Add a test remote with:
 
@@ -19,9 +32,21 @@ git remote add punch punch://<any value>
 
 The `<any-value>` will be replaced with a public key for your repo soon.
 
+## Development
+
+Quick setup for testing, link the file to a folder on your path so you can use with git:
+```bash
+sudo ln -s $(pwd)/index.js /usr/local/bin/git-remote-punch
+```
+
+Git will automatically look for `git-remote-<protocol>` when accessing a remote.
+
 ## ToDo
-- [ ] Create terminal app to wrap main logic
-- [ ] Move index.js to call pear and start seeding
-- [ ] Implement fetch
-- [ ] Create TUI (flag or connect to worker)
-- [ ] Flesh out todos 
+- [ ] Mult-writer
+- [ ] Access management
+- [ ] Deduplication
+- [ ] In memory git packing
+
+## Note
+
+This is an early development release and is not yet optimized for efficiency. 
