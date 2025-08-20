@@ -46,7 +46,50 @@ test('replicates', async function (t) {
   const config1 = await db1.getRemote('test').getConfig()
   const config2 = await db2.getRemote('test').getConfig()
 
-  t.alike(config1, config2)
+  t.alike(config1, config2, 'config should equal')
+
+  // Add fake object
+  const batch = await db1.getRemote('test')._blobs.batch()
+  const buffer = Buffer.from('test')
+  const id = await batch.put(buffer)
+
+  const objectData = {
+    oid: '123',
+    blobId: id,
+    type: 'blob',
+    size: buffer.length,
+    refOid: '789'
+  }
+  await db1.getRemote('test').addObject(objectData)
+  await batch.flush()
+
+  await db2.getRemote('test')._db.core.get(4)
+  await db2.getRemote('test')._db.update()
+
+  await new Promise(resolve => setTimeout(resolve, 1000))
+
+  t.pass('blobs updated')
+
+  const objectResult = await db1.getRemote('test').getObject('123')
+  t.alike(objectResult, objectData, 'object should equal')
+  const blob = await db1.getRemote('test').getBlob(id)
+  t.alike(blob, buffer, 'blob should equal')
+
+  //  Check that the object is replicated
+  const objectResult2 = await db2.getRemote('test').getObject('123')
+  t.alike(objectResult2, objectData, 'object should equal from remote 2')
+
+  t.alike(id, {
+    blockOffset: 0,
+    blockLength: 1,
+    byteOffset: 0,
+    byteLength: 4
+  }, 'id should equal')
+
+  await db2.getRemote('test')._blobs.core.update()
+
+  const blob2 = await db2.getRemote('test').getBlob(id)
+  t.alike(blob2, buffer, 'blob should equal from remote 2')
 })
 
 async function createStore (t) {

@@ -9,16 +9,6 @@ const db = new PunchLocalDB({
   repo: 'test'
 })
 
-const setup = async () => {
-  await db.ready()
-
-  const repo = await db.getRepo('test')
-
-  if (!repo) {
-    await db.createRemote('test')
-  }
-}
-
 Pear.teardown = async () => {
   await db.close()
 }
@@ -71,6 +61,8 @@ screen.onKey('c', () => {
 })
 
 const renderMainScreen = () => {
+  screen.children = [reposBox]
+
   if (db.remotes && db.remotes.size > 0) {
     const title = new Text(2, 1, 'Your Repositories:', { color: 'bright', paddingX: 2 })
     screen.append(title)
@@ -173,8 +165,10 @@ screen.onKey('n', () => {
   screen.render()
 })
 
-setup().then(async () => {
-  screen.remove(loadingText)
+const main = async () => {
+  await db.ready()
 
   renderMainScreen()
-})
+}
+
+main()
