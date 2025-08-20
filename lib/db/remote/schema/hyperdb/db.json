@@ -37,11 +37,13 @@
       "namespace": "punch-remote",
       "id": 2,
       "type": 1,
-      "indexes": [],
+      "indexes": [
+        "@punch-remote/config-by-name"
+      ],
       "schema": "@punch-remote/config",
       "derived": false,
       "key": [
-        "blobsKey"
+        "key"
       ],
       "trigger": null
     },
@@ -65,6 +67,17 @@
       "unique": false,
       "key": [
         "refOid"
+      ]
+    },
+    {
+      "name": "config-by-name",
+      "namespace": "punch-remote",
+      "id": 5,
+      "type": 2,
+      "collection": "@punch-remote/config",
+      "unique": false,
+      "key": [
+        "name"
       ]
     }
   ]

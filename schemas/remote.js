@@ -13,12 +13,17 @@ punch.register({
   compact: true,
   fields: [
     {
-      name: 'blobsKey',
+      name: 'name',
+      type: 'string',
+      required: true
+    },
+    {
+      name: 'key',
       type: 'buffer',
       required: true
     },
     {
-      name: 'blobsDiscoveryKey',
+      name: 'blobsKey',
       type: 'buffer',
       required: true
     }
@@ -97,7 +102,7 @@ punchDb.collections.register({
 punchDb.collections.register({
   name: 'config',
   schema: '@punch-remote/config',
-  key: ['blobsKey']
+  key: ['key']
 })
 
 punchDb.indexes.register({
@@ -110,6 +115,12 @@ punchDb.indexes.register({
   name: 'objects-by-refOid',
   collection: '@punch-remote/objects',
   key: ['refOid']
+})
+
+punchDb.indexes.register({
+  name: 'config-by-name',
+  collection: '@punch-remote/config',
+  key: ['name']
 })
 
 HyperDB.toDisk(db)

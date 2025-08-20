@@ -11,7 +11,7 @@
     "git-remote-punch": "index.js"
   },
   "scripts": {
-    "test": "brittle test/index.test.js",
+    "test": "brittle test/*.js",
     "fix": "standard --fix",
     "schema": "node schemas/local.js && node schemas/remote.js"
   },
@@ -19,9 +19,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@hyperswarm/testnet": "^3.1.1",
-    "brittle": "^3.2.1",
-    "standard": "^17.1.2"
+    "brittle": "^3.18.0",
+    "hyperdht": "^6.21.0",
+    "standard": "^17.1.2",
+    "test-tmp": "^1.4.0"
   },
   "imports": {
     "fs": {
@@ -71,7 +72,6 @@
     "hyperblobs": "^2.8.0",
     "hypercore": "^11.11.1",
     "hyperdb": "^4.16.0",
-    "hyperdht": "^6.6.0",
     "hyperschema": "^1.13.0",
     "hyperswarm": "^4.12.1",
     "pear-inspect": "^1.2.5",

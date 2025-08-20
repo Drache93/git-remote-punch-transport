@@ -3,7 +3,7 @@
 /* global Pear */
 
 const { PunchLocalDB } = require('./lib/db')
-const { Tui, Box, Text, SelectableList } = require('./lib/tui')
+const { Tui, Box, Text, SelectableList, TextInput } = require('./lib/tui')
 
 const db = new PunchLocalDB({
   repo: 'test'
@@ -70,29 +70,14 @@ screen.onKey('c', () => {
   }
 })
 
-// screen.onKey('n', () => {
-//   // create a new repo
-//   const newRepoModal = new Box(
-//     (width, height) => 0,
-//     (width, height) => height * 0.25,
-//     '50%',
-//     10,
-//     { title: 'Create New Repository', color: 'cyan', border: 'blue', clear: true }
-//   )
-//   screen.append(newRepoModal)
-//   screen.render()
-// })
-
-setup().then(async () => {
-  screen.remove(loadingText)
-
-  if (db.remotes && db.remotes.length > 0) {
+const renderMainScreen = () => {
+  if (db.remotes && db.remotes.size > 0) {
     const title = new Text(2, 1, 'Your Repositories:', { color: 'bright', paddingX: 2 })
     screen.append(title)
 
     // Create selectable list with repositories
-    repoList = new SelectableList(1, 2, '100%', db.remotes.length, {
-      items: db.remotes.map(repo => ({
+    repoList = new SelectableList(1, 2, '100%', db.remotes.size, {
+      items: Array.from(db.remotes.values()).map(repo => ({
         name: repo.name,
         value: repo.remoteUrl
       })),
@@ -114,14 +99,82 @@ setup().then(async () => {
     screen.append(repoList)
   } else {
     const noReposText = new Text(2, 2, 'No repositories found', { color: 'yellow', paddingX: 2 })
-    const addRepoText = new Text(2, 4, 'Use "git remote add punch punch://<key>" to add a repository', { color: 'cyan', paddingX: 2 })
     screen.append(noReposText)
-    screen.append(addRepoText)
   }
 
   // Add status text with navigation instructions
-  const statusText = new Text(2, -2, `Total repos: ${db.remotes ? db.remotes.length : 0} | Use ↑/↓ to navigate, c to copy, q to quit`, { color: 'cyan' })
+  const statusText = new Text(2, -2, `Total repos: ${db.remotes ? db.remotes.size : 0} | Use ↑/↓ to navigate, c to copy, n to create, q to quit`, { color: 'cyan' })
   screen.append(statusText)
 
   screen.render()
+}
+
+screen.onKey('n', () => {
+  // create a new repo
+  const newRepoModal = new Box(
+    (width, height) => 0,
+    (width, height) => (height * 0.25) + 2,
+    '50%',
+    3,
+    { title: 'Create New Repository', color: 'green', border: 'green', clear: true }
+  )
+  screen.append(newRepoModal)
+
+  const input = new TextInput(
+    (width, height) => 1,
+    (width, height) => (height * 0.25) + 3,
+    '50%',
+    1,
+    { text: '', color: 'white', border: 'white', paddingX: 2, paddingY: 1, clear: true }
+  )
+  screen.append(input)
+
+  let text = ''
+
+  screen.setHandlingInput(async (key) => {
+    // Escape
+    if (key === 'q' || key === '\u001b' || key === '\u0003') {
+      screen.remove(newRepoModal)
+      screen.remove(input)
+      screen.setHandlingInput(null)
+      screen.render()
+    }
+
+    // Enter
+    if (key === '\r') {
+      screen.setHandlingInput(null)
+      screen.remove(input)
+      const loading = new Text((width, height) => 1,
+        (width, height) => (height * 0.25) + 3, 'Creating...', { color: 'yellow' })
+      screen.append(loading)
+      screen.render()
+
+      // create a new repo
+      db.createRemote(text).then(() => {
+        screen.remove(newRepoModal)
+        screen.remove(loading)
+        screen.render()
+
+        renderMainScreen()
+      })
+    }
+
+    // backspace
+    if (key === '\u007f') {
+      text = text.slice(0, -1)
+    } else {
+      text += key
+    }
+
+    input.text = text
+    screen.render()
+  })
+
+  screen.render()
+})
+
+setup().then(async () => {
+  screen.remove(loadingText)
+
+  renderMainScreen()
 })
