@@ -70,6 +70,19 @@ screen.onKey('c', () => {
   }
 })
 
+// screen.onKey('n', () => {
+//   // create a new repo
+//   const newRepoModal = new Box(
+//     (width, height) => 0,
+//     (width, height) => height * 0.25,
+//     '50%',
+//     10,
+//     { title: 'Create New Repository', color: 'cyan', border: 'blue', clear: true }
+//   )
+//   screen.append(newRepoModal)
+//   screen.render()
+// })
+
 setup().then(async () => {
   screen.remove(loadingText)
 

@@ -26,8 +26,7 @@ const url = argv[5]
 const configBuffer = b4a.from(url.replace('punch://', ''), 'hex')
 let config = {}
 try {
-
-      config = cenc.decode(repoConfig, configBuffer) || {} 
+    config = cenc.decode(repoConfig, configBuffer) || {} 
 } catch (error) {
     throw new Error("Invalid punch url: " + url)
 }
@@ -52,6 +51,7 @@ const main = async (args) => {
   } catch (error) {
     process.stderr.write(`${error.message}\n`)
     pipe.end()
+    process.exit(1)
   }
 
   for await (const line of readline.createInterface({ input: process.stdin, crlfDelay })) {
