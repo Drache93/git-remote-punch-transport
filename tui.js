@@ -70,7 +70,7 @@ const renderMainScreen = () => {
     // Create selectable list with repositories
     repoList = new SelectableList(1, 2, '100%', db.remotes.size, {
       items: Array.from(db.remotes.values()).map(repo => ({
-        name: repo.name,
+        name: `${repo.name} (${repo.availabePeers} peers)`,
         value: repo.remoteUrl
       })),
       onCopy: (selectedRepo) => {
@@ -167,6 +167,10 @@ screen.onKey('n', () => {
 
 const main = async () => {
   await db.ready()
+
+  db.on('connection', (conn) => {
+    screen.render()
+  })
 
   renderMainScreen()
 }

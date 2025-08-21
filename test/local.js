@@ -66,6 +66,8 @@ test('replicates', async function (t) {
   await db2.getRemote('test')._db.core.get(4)
   await db2.getRemote('test')._db.update()
 
+  t.is(db2.getRemote('test').availabePeers, 1, 'should have 1 peer')
+
   await new Promise(resolve => setTimeout(resolve, 1000))
 
   t.pass('blobs updated')

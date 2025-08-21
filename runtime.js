@@ -75,6 +75,10 @@ const main = async (args) => {
             case 'cloning':
               punch.setCloning(line.split(' ')[2] === 'true')
               break
+            case 'followtags':
+              // TODO: Handle this
+              punch.setFollowTags(line.split(' ')[2] === 'true')
+              break
           }
           process.stdout.write('ok\n')
         }

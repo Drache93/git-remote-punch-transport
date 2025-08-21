@@ -55,7 +55,9 @@
     }
   },
   "dependencies": {
+    "buffer": "npm:bare-buffer",
     "b4a": "^1.6.7",
+    "bare-buffer": "^3.3.0",
     "bare-fs": "^4.1.6",
     "bare-os": "^3.6.1",
     "bare-path": "^3.0.0",
@@ -74,6 +76,7 @@
     "hyperdb": "^4.16.0",
     "hyperschema": "^1.13.0",
     "hyperswarm": "^4.12.1",
+    "isomorphic-git": "^1.33.0",
     "pear-inspect": "^1.2.5",
     "pear-pipe": "^1.0.1",
     "pear-run": "^1.0.0",
