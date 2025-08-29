@@ -5,9 +5,7 @@
 const { PunchLocalDB } = require('./lib/db')
 const { Tui, Box, Text, SelectableList, TextInput } = require('./lib/tui')
 
-const db = new PunchLocalDB({
-  repo: 'test'
-})
+const db = new PunchLocalDB()
 
 Pear.teardown = async () => {
   await db.close()
