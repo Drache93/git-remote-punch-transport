@@ -47,9 +47,11 @@ const main = async (args) => {
   })
 
   try {
+    process.stderr.write('Punching...')
     await punch.ready()
+    process.stderr.write(`Punched! Found ${punch.remote.availabePeers} peer${punch.remote.availabePeers === 1 ? '' : 's'}\n`)
   } catch (error) {
-    process.stderr.write(`${error.message}\n`)
+    process.stderr.write(`Failed to punch: ${error.message}\n`)
     pipe.end()
     process.exit(1)
   }

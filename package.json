@@ -45,10 +45,6 @@
       "bare": "bare-subprocess",
       "default": "child_process"
     },
-    "readline": {
-      "bare": "bare-readline",
-      "default": "readline"
-    },
     "tty": {
       "bare": "bare-tty",
       "default": "tty"
@@ -56,6 +52,7 @@
   },
   "dependencies": {
     "buffer": "npm:bare-buffer",
+    "readline": "npm:bare-readline",
     "b4a": "^1.6.7",
     "bare-buffer": "^3.3.0",
     "bare-fs": "^4.1.6",
