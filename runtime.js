@@ -23,9 +23,22 @@ const remote = argv[4]
 const url = argv[5]
 
 // Get the config from the url
-const configBuffer = b4a.from(url.replace('punch://', ''), 'hex')
 let config = {}
 try {
+    if(!url.includes("punch://")) {
+      // Search for it in the args
+      process.stderr.write("Searching for config...\n")
+      const urlIdx = argv.findIndex(arg => arg.startsWith('punch://'))
+      url = argv[urlIdx]
+      remote = argv[urlIdx - 1]
+      
+      if(!url){
+        process.abort("Punch url could not be found in args")
+      }
+    }
+    
+
+    const configBuffer = b4a.from(url.replace('punch://', '').trim(), 'hex')
     config = cenc.decode(repoConfig, configBuffer) || {} 
 } catch (error) {
     throw new Error("Invalid punch url: " + url)
