@@ -32,6 +32,25 @@ git remote add punch punch://<any value>
 
 The `<any-value>` will be replaced with a public key for your repo soon.
 
+### Progress Output
+
+The transport provides git-like progress output during push and fetch operations, showing:
+
+- **Enumerating objects**: Counts objects being prepared for transfer
+- **Writing objects**: Shows percentage complete, object count, data size, and transfer rate
+- **Receiving objects**: Similar progress for fetch/clone operations
+
+Example push output:
+```
+Punching... Punched! Found 2 peers
+⠙ Enumerating objects: 42
+✔ Enumerating objects: 42, done.
+⠙ Writing objects: 75% (32/42) [===============     ] 1.2 MiB
+✔ Writing objects: 100% (42/42), 1.6 MiB | 245.3 KiB/s, done.
+```
+
+Progress output is enabled by default and uses `yocto-spinner` for smooth visual feedback. All progress messages are written to `process.stderr` to avoid interfering with the git protocol communication on stdout.
+
 ## Development
 
 Quick setup for testing, link the file to a folder on your path so you can use with git:

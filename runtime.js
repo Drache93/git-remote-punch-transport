@@ -3,12 +3,12 @@ const cenc = require('compact-encoding')
 const b4a = require('b4a')
 const { PunchGit } = require('./lib/punch.js')
 const { repoConfig } = require('./lib/messages.js')
-const process = require('process');
+const process = require('process')
 const pipe = require('pear-pipe')()
 
-if(!pipe){
-    require('./tui.js')
-    return
+if (!pipe) {
+  require('./tui.js')
+  process.exit(0)
 }
 
 // const GIT_PUNCH_SERVER_NAMESPACE = 'git-remote-punch'
@@ -19,29 +19,28 @@ const argv = process.argv.slice(0)
 // args[1] == git-remote-punch location
 // args[2] == --trusted
 // args[3] == (link)
-const remote = argv[4]
-const url = argv[5]
+let remote = argv[4]
+let url = argv[5]
 
 // Get the config from the url
 let config = {}
 try {
-    if(!url.includes("punch://")) {
-      // Search for it in the args
-      process.stderr.write("Searching for config...\n")
-      const urlIdx = argv.findIndex(arg => arg.startsWith('punch://'))
-      url = argv[urlIdx]
-      remote = argv[urlIdx - 1]
-      
-      if(!url){
-        process.abort("Punch url could not be found in args")
-      }
-    }
-    
+  if (!url.includes('punch://')) {
+    // Search for it in the args
+    process.stderr.write('Searching for config...\n')
+    const urlIdx = argv.findIndex((arg) => arg.startsWith('punch://'))
+    url = argv[urlIdx]
+    remote = argv[urlIdx - 1]
 
-    const configBuffer = b4a.from(url.replace('punch://', '').trim(), 'hex')
-    config = cenc.decode(repoConfig, configBuffer) || {} 
+    if (!url) {
+      process.abort('Punch url could not be found in args')
+    }
+  }
+
+  const configBuffer = b4a.from(url.replace('punch://', '').trim(), 'hex')
+  config = cenc.decode(repoConfig, configBuffer) || {}
 } catch (error) {
-    throw new Error("Invalid punch url: " + url)
+  throw new Error('Invalid punch url: ' + url)
 }
 
 const capabilities = () => {
@@ -51,7 +50,6 @@ const capabilities = () => {
 // Git communicates with the remote helper using new line based protocol, check https://git-scm.com/docs/gitremote-helpers
 
 const main = async (args) => {
-
   const crlfDelay = 30000
 
   const punch = new PunchGit({
@@ -59,17 +57,18 @@ const main = async (args) => {
     ...config
   })
 
-  try {
-    process.stderr.write('Punching...')
-    await punch.ready()
-    process.stderr.write(`Punched! Found ${punch.remote.availabePeers} peer${punch.remote.availabePeers === 1 ? '' : 's'}\n`)
-  } catch (error) {
-    process.stderr.write(`Failed to punch: ${error.message}\n`)
-    pipe.end()
-    process.exit(1)
-  }
+  // Enable progress by default for better UX
+  punch.setProgress(true)
 
-  for await (const line of readline.createInterface({ input: process.stdin, crlfDelay })) {
+  // TODO: Let erorrs explode for now
+  punch._progressReporter.punching()
+  await punch.ready()
+  punch._progressReporter.punched(punch.remote)
+
+  for await (const line of readline.createInterface({
+    input: process.stdin,
+    crlfDelay
+  })) {
     const command = line.split(' ')[0]
     punch._verbose('Line: ' + line)
 
@@ -98,7 +97,7 @@ const main = async (args) => {
           process.stdout.write('ok\n')
         }
         break
-      case 'list':{
+      case 'list': {
         // list
         if (line === 'list') {
           await punch.listAndStoreRefs()
@@ -108,7 +107,7 @@ const main = async (args) => {
         }
         break
       }
-      case 'push':{
+      case 'push': {
         const ref = line.split(' ')[1]
 
         punch.addPushRefs(ref)
@@ -119,7 +118,7 @@ const main = async (args) => {
 
         break
       }
-      case '':{
+      case '': {
         if (punch.hasPendingFetch()) {
           await punch.fetch()
         } else {
