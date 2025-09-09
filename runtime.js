@@ -37,10 +37,12 @@ try {
     }
   }
 
-  const configBuffer = b4a.from(url.replace('punch://', '').trim(), 'hex')
+  // @todo do we need the `/<repo>` part?
+  const value = url.replace('punch://', '').trim().split('/')[0]
+  const configBuffer = b4a.from(value, 'hex')
   config = cenc.decode(repoConfig, configBuffer) || {}
 } catch (error) {
-  throw new Error('Invalid punch url: ' + url)
+  throw new Error(`Invalid punch url: ${url}: ${error.message}`)
 }
 
 const capabilities = () => {
