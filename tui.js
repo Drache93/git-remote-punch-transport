@@ -18,8 +18,14 @@ const screen = new Tui()
 screen.enterFullScreen()
 
 // Show loading screen
-const reposBox = new Box(0, 0, '100%', '100%', { title: 'Git Remote Punch', color: 'cyan', border: 'blue' })
-const loadingText = new Text(2, 2, 'Loading repositories...', { color: 'yellow' })
+const reposBox = new Box(0, 0, '100%', '100%', {
+  title: 'Git Remote Punch',
+  color: 'cyan',
+  border: 'blue'
+})
+const loadingText = new Text(2, 2, 'Loading repositories...', {
+  color: 'yellow'
+})
 screen.append(reposBox)
 screen.append(loadingText)
 screen.render()
@@ -33,19 +39,22 @@ screen.onKey('q', () => {
   Pear.exit(0)
 })
 
-screen.onKey('\u001b', () => { // Escape
+screen.onKey('\u001b', () => {
+  // Escape
   screen.exitFullScreen()
   Pear.exit(0)
 })
 
-screen.onKey('\u001b[A', () => { // Up arrow
+screen.onKey('\u001b[A', () => {
+  // Up arrow
   if (repoList) {
     repoList.selectPrevious()
     screen.render()
   }
 })
 
-screen.onKey('\u001b[B', () => { // Down arrow
+screen.onKey('\u001b[B', () => {
+  // Down arrow
   if (repoList) {
     repoList.selectNext()
     screen.render()
@@ -62,12 +71,15 @@ const renderMainScreen = () => {
   screen.children = [reposBox]
 
   if (db.remotes && db.remotes.size > 0) {
-    const title = new Text(2, 1, 'Your Repositories:', { color: 'bright', paddingX: 2 })
+    const title = new Text(2, 1, 'Your Repositories:', {
+      color: 'bright',
+      paddingX: 2
+    })
     screen.append(title)
 
     // Create selectable list with repositories
     repoList = new SelectableList(1, 2, '100%', db.remotes.size, {
-      items: Array.from(db.remotes.values()).map(repo => ({
+      items: Array.from(db.remotes.values()).map((repo) => ({
         name: `${repo.name} (${repo.availabePeers} peers)`,
         value: repo.remoteUrl
       })),
@@ -75,7 +87,12 @@ const renderMainScreen = () => {
         screen.copyToClipboard(selectedRepo.value)
 
         // Show feedback
-        const feedbackText = new Text(2, -4, `Copied: ${selectedRepo.name} url`, { color: 'green' })
+        const feedbackText = new Text(
+          2,
+          -4,
+          `Copied: ${selectedRepo.name} url`,
+          { color: 'green' }
+        )
         screen.append(feedbackText)
         screen.render()
 
@@ -88,12 +105,20 @@ const renderMainScreen = () => {
     })
     screen.append(repoList)
   } else {
-    const noReposText = new Text(2, 2, 'No repositories found', { color: 'yellow', paddingX: 2 })
+    const noReposText = new Text(2, 2, 'No repositories found', {
+      color: 'yellow',
+      paddingX: 2
+    })
     screen.append(noReposText)
   }
 
   // Add status text with navigation instructions
-  const statusText = new Text(2, -2, `Total repos: ${db.remotes ? db.remotes.size : 0} | Use ↑/↓ to navigate, c to copy, n to create, q to quit`, { color: 'cyan' })
+  const statusText = new Text(
+    2,
+    -2,
+    `Total repos: ${db.remotes ? db.remotes.size : 0} | Use ↑/↓ to navigate, c to copy, n to create, q to quit`,
+    { color: 'cyan' }
+  )
   screen.append(statusText)
 
   screen.render()
@@ -103,19 +128,31 @@ screen.onKey('n', () => {
   // create a new repo
   const newRepoModal = new Box(
     (width, height) => 0,
-    (width, height) => (height * 0.25) + 2,
+    (width, height) => height * 0.25 + 2,
     '50%',
     3,
-    { title: 'Create New Repository', color: 'green', border: 'green', clear: true }
+    {
+      title: 'Create New Repository',
+      color: 'green',
+      border: 'green',
+      clear: true
+    }
   )
   screen.append(newRepoModal)
 
   const input = new TextInput(
     (width, height) => 1,
-    (width, height) => (height * 0.25) + 3,
+    (width, height) => height * 0.25 + 3,
     '50%',
     1,
-    { text: '', color: 'white', border: 'white', paddingX: 2, paddingY: 1, clear: true }
+    {
+      text: '',
+      color: 'white',
+      border: 'white',
+      paddingX: 2,
+      paddingY: 1,
+      clear: true
+    }
   )
   screen.append(input)
 
@@ -134,8 +171,12 @@ screen.onKey('n', () => {
     if (key === '\r') {
       screen.setHandlingInput(null)
       screen.remove(input)
-      const loading = new Text((width, height) => 1,
-        (width, height) => (height * 0.25) + 3, 'Creating...', { color: 'yellow' })
+      const loading = new Text(
+        (width, height) => 1,
+        (width, height) => height * 0.25 + 3,
+        'Creating...',
+        { color: 'yellow' }
+      )
       screen.append(loading)
       screen.render()
 
@@ -165,6 +206,7 @@ screen.onKey('n', () => {
 
 const main = async () => {
   await db.ready()
+  await db.openRemotes()
 
   db.on('connection', (conn) => {
     screen.render()

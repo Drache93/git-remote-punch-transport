@@ -8,7 +8,7 @@ const pipe = require('pear-pipe')()
 
 if (!pipe) {
   require('./tui.js')
-  process.exit(0)
+  return
 }
 
 // const GIT_PUNCH_SERVER_NAMESPACE = 'git-remote-punch'
