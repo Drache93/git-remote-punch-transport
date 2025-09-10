@@ -11,7 +11,7 @@ class API {
 }
 
 // TODO: add an arg to run locally
-const link = 'pear://cgnph3qsrfk55pcpzyd3ab7rheqd9jjcxfam3ypmu9989q1xk3zy'
+const link = 'pear://fxo6uhz74dpz4cw95bjraw4a8g79c34zy6hgcfpcao458onmkzoy'
 global.Pear = new API()
 
 // ? run direct and let it stdout/stderr itself?

@@ -27,7 +27,7 @@ pear run pear://cgnph3qsrfk55pcpzyd3ab7rheqd9jjcxfam3ypmu9989q1xk3zy
 Add a test remote with:
 
 ```bash
-git remote add punch punch://<any value> 
+git remote add punch punch://<any value>
 ```
 
 The `<any-value>` will be replaced with a public key for your repo soon.
@@ -61,11 +61,12 @@ sudo ln -s $(pwd)/index.js /usr/local/bin/git-remote-punch
 Git will automatically look for `git-remote-<protocol>` when accessing a remote.
 
 ## ToDo
+- [ ] Ensure natural object ordering is replicated in core
 - [ ] Mult-writer
 - [ ] Access management
-- [ ] Deduplication
-- [ ] In memory git packing
+- [x] Deduplication - Objects are not pushed if they already exist on the remote
+- [x] In memory git packing - uses `isomorphic-git` to rebuild the repo from the stored objects
 
 ## Note
 
-This is an early development release and is not yet optimized for efficiency. 
+This is an early development release and is not yet optimized for efficiency.
