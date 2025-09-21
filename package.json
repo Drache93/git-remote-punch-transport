@@ -59,6 +59,7 @@
     "pear-inspect": "^1.2.5",
     "pear-pipe": "^1.0.1",
     "pear-run": "^1.0.0",
+    "prettier-config-holepunch": "^1.0.0",
     "process": "npm:bare-node-process",
     "protomux-wakeup": "^2.6.1",
     "readline": "npm:bare-readline",

@@ -1,3 +1,7 @@
+/** @typedef {import('pear-interface')} */
+
+/* global Pear */
+
 const readline = require('readline')
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
@@ -53,7 +57,7 @@ const main = async (args) => {
   })
 
   Pear.teardown(async () => {
-    await punch._close()
+    await punch.close()
   })
 
   // Enable progress by default for better UX
