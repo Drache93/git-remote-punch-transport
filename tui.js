@@ -3,6 +3,7 @@
 
 const { header, summary, command, flag, arg } = require('paparam')
 const { PunchLocalDB } = require('./lib/db')
+const Id = require('hypercore-id-encoding')
 const { Tui, Box, Text, SelectableList, TextInput } = require('./lib/tui')
 const process = require('process')
 const { createIdentity, getIdentity } = require('./lib/id')
@@ -143,6 +144,22 @@ if (args.name === 'config') {
       })
       screen.append(noReposText)
     }
+
+    screen.append(
+      new Text(2, -4, `Username: ${db._identity.keetUsername}`, {
+        color: 'cyan'
+      })
+    )
+    screen.append(
+      new Text(
+        2,
+        -3,
+        `Device Key: ${Id.encode(db._identity.devicePublicKey)}`,
+        {
+          color: 'cyan'
+        }
+      )
+    )
 
     // Add status text with navigation instructions
     const statusText = new Text(
