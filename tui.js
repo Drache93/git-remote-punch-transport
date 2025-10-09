@@ -1,218 +1,251 @@
 /** @typedef {import('pear-interface')} */
-
 /* global Pear */
 
+const { header, summary, command, flag, arg } = require('paparam')
 const { PunchLocalDB } = require('./lib/db')
 const { Tui, Box, Text, SelectableList, TextInput } = require('./lib/tui')
+const process = require('process')
+const { createIdentity, getIdentity } = require('./lib/id')
 
-const db = new PunchLocalDB()
+const configCmd = command(
+  'config',
+  header('Configure Punch'),
+  summary('Configure Punch settings and your identity'),
+  flag('--username|-u [username]', 'Your username from Keet'),
+  arg('--force', 'Force identity creation')
+)
 
-Pear.teardown = async () => {
-  await db.close()
-}
+const cmd = command(
+  'Punch',
+  summary('Punch TUI'),
+  header('Welcome Punch'),
+  arg('link', 'Pear runtime link', ''),
+  configCmd
+)
+const args = cmd.parse(process.argv.slice(3))
 
-// Create a screen object and enter full-screen mode
-const screen = new Tui()
+if (args.name === 'config') {
+  const config = async () => {
+    if ((await getIdentity()) && !args.flags.force) {
+      console.log('Identity already exists, use --force to overwrite')
+      return
+    }
 
-// Enter full-screen mode
-screen.enterFullScreen()
-
-// Show loading screen
-const reposBox = new Box(0, 0, '100%', '100%', {
-  title: 'Git Remote Punch',
-  color: 'cyan',
-  border: 'blue'
-})
-const loadingText = new Text(2, 2, 'Loading repositories...', {
-  color: 'yellow'
-})
-screen.append(reposBox)
-screen.append(loadingText)
-screen.render()
-
-// Create selectable list for repositories
-let repoList = null
-
-// Set up keyboard handlers
-screen.onKey('q', () => {
-  screen.exitFullScreen()
-  Pear.exit(0)
-})
-
-screen.onKey('\u001b', () => {
-  // Escape
-  screen.exitFullScreen()
-  Pear.exit(0)
-})
-
-screen.onKey('\u001b[A', () => {
-  // Up arrow
-  if (repoList) {
-    repoList.selectPrevious()
-    screen.render()
-  }
-})
-
-screen.onKey('\u001b[B', () => {
-  // Down arrow
-  if (repoList) {
-    repoList.selectNext()
-    screen.render()
-  }
-})
-
-screen.onKey('c', () => {
-  if (repoList) {
-    repoList.copySelected()
-  }
-})
-
-const renderMainScreen = () => {
-  screen.children = [reposBox]
-
-  if (db.remotes && db.remotes.size > 0) {
-    const title = new Text(2, 1, 'Your Repositories:', {
-      color: 'bright',
-      paddingX: 2
-    })
-    screen.append(title)
-
-    // Create selectable list with repositories
-    repoList = new SelectableList(1, 2, '100%', db.remotes.size, {
-      items: Array.from(db.remotes.values()).map((repo) => ({
-        name: `${repo.name} (${repo.availabePeers} peers)`,
-        value: repo.remoteUrl
-      })),
-      onCopy: (selectedRepo) => {
-        screen.copyToClipboard(selectedRepo.value)
-
-        // Show feedback
-        const feedbackText = new Text(
-          2,
-          -4,
-          `Copied: ${selectedRepo.name} url`,
-          { color: 'green' }
-        )
-        screen.append(feedbackText)
-        screen.render()
-
-        // Remove feedback after 2 seconds
-        setTimeout(() => {
-          screen.remove(feedbackText)
-          screen.render()
-        }, 2000)
-      }
-    })
-    screen.append(repoList)
-  } else {
-    const noReposText = new Text(2, 2, 'No repositories found', {
-      color: 'yellow',
-      paddingX: 2
-    })
-    screen.append(noReposText)
+    const id = await createIdentity(args.flags.username)
+    console.log('Identity created:', id)
   }
 
-  // Add status text with navigation instructions
-  const statusText = new Text(
-    2,
-    -2,
-    `Total repos: ${db.remotes ? db.remotes.size : 0} | Use ↑/↓ to navigate, c to copy, n to create, q to quit`,
-    { color: 'cyan' }
-  )
-  screen.append(statusText)
+  config()
+} else if (args.name === 'Punch') {
+  const db = new PunchLocalDB()
 
+  Pear.teardown = async () => {
+    await db.close()
+  }
+
+  // Create a screen object and enter full-screen mode
+  const screen = new Tui()
+
+  // Enter full-screen mode
+  screen.enterFullScreen()
+
+  // Show loading screen
+  const reposBox = new Box(0, 0, '100%', '100%', {
+    title: 'Git Remote Punch',
+    color: 'cyan',
+    border: 'blue'
+  })
+  const loadingText = new Text(2, 2, 'Loading repositories...', {
+    color: 'yellow'
+  })
+  screen.append(reposBox)
+  screen.append(loadingText)
   screen.render()
-}
 
-screen.onKey('n', () => {
-  // create a new repo
-  const newRepoModal = new Box(
-    (width, height) => 0,
-    (width, height) => height * 0.25 + 2,
-    '50%',
-    3,
-    {
-      title: 'Create New Repository',
-      color: 'green',
-      border: 'green',
-      clear: true
-    }
-  )
-  screen.append(newRepoModal)
+  // Create selectable list for repositories
+  let repoList = null
 
-  const input = new TextInput(
-    (width, height) => 1,
-    (width, height) => height * 0.25 + 3,
-    '50%',
-    1,
-    {
-      text: '',
-      color: 'white',
-      border: 'white',
-      paddingX: 2,
-      paddingY: 1,
-      clear: true
-    }
-  )
-  screen.append(input)
+  // Set up keyboard handlers
+  screen.onKey('q', () => {
+    screen.exitFullScreen()
+    Pear.exit(0)
+  })
 
-  let text = ''
-
-  screen.setHandlingInput(async (key) => {
+  screen.onKey('\u001b', () => {
     // Escape
-    if (key === 'q' || key === '\u001b' || key === '\u0003') {
-      screen.remove(newRepoModal)
-      screen.remove(input)
-      screen.setHandlingInput(null)
+    screen.exitFullScreen()
+    Pear.exit(0)
+  })
+
+  screen.onKey('\u001b[A', () => {
+    // Up arrow
+    if (repoList) {
+      repoList.selectPrevious()
       screen.render()
     }
+  })
 
-    // Enter
-    if (key === '\r') {
-      screen.setHandlingInput(null)
-      screen.remove(input)
-      const loading = new Text(
-        (width, height) => 1,
-        (width, height) => height * 0.25 + 3,
-        'Creating...',
-        { color: 'yellow' }
-      )
-      screen.append(loading)
+  screen.onKey('\u001b[B', () => {
+    // Down arrow
+    if (repoList) {
+      repoList.selectNext()
       screen.render()
+    }
+  })
 
-      // create a new repo
-      db.createRemote(text).then(() => {
+  screen.onKey('c', () => {
+    if (repoList) {
+      repoList.copySelected()
+    }
+  })
+
+  const renderMainScreen = () => {
+    screen.children = [reposBox]
+
+    if (db.remotes && db.remotes.size > 0) {
+      const title = new Text(2, 1, 'Your Repositories:', {
+        color: 'bright',
+        paddingX: 2
+      })
+      screen.append(title)
+
+      // Create selectable list with repositories
+      repoList = new SelectableList(1, 2, '100%', db.remotes.size, {
+        items: Array.from(db.remotes.values()).map((repo) => ({
+          name: `${repo.name} (${repo.availabePeers} peers)`,
+          value: repo.remoteUrl
+        })),
+        onCopy: (selectedRepo) => {
+          screen.copyToClipboard(selectedRepo.value)
+
+          // Show feedback
+          const feedbackText = new Text(
+            2,
+            -4,
+            `Copied: ${selectedRepo.name} url`,
+            { color: 'green' }
+          )
+          screen.append(feedbackText)
+          screen.render()
+
+          // Remove feedback after 2 seconds
+          setTimeout(() => {
+            screen.remove(feedbackText)
+            screen.render()
+          }, 2000)
+        }
+      })
+      screen.append(repoList)
+    } else {
+      const noReposText = new Text(2, 2, 'No repositories found', {
+        color: 'yellow',
+        paddingX: 2
+      })
+      screen.append(noReposText)
+    }
+
+    // Add status text with navigation instructions
+    const statusText = new Text(
+      2,
+      -2,
+      `Total repos: ${db.remotes ? db.remotes.size : 0} | Use ↑/↓ to navigate, c to copy, n to create, q to quit`,
+      { color: 'cyan' }
+    )
+    screen.append(statusText)
+
+    screen.render()
+  }
+
+  screen.onKey('n', () => {
+    // create a new repo
+    const newRepoModal = new Box(
+      (width, height) => width / 4,
+      (width, height) => height * 0.25 + 2,
+      '50%',
+      3,
+      {
+        title: 'Create New Repository',
+        color: 'green',
+        border: 'green',
+        clear: true
+      }
+    )
+    screen.append(newRepoModal)
+
+    const input = new TextInput(
+      (width, height) => width / 4 + 1,
+      (width, height) => height * 0.25 + 3,
+      '50%',
+      1,
+      {
+        text: '',
+        color: 'white',
+        border: 'white',
+        paddingX: 2,
+        paddingY: 1,
+        clear: true
+      }
+    )
+    screen.append(input)
+
+    let text = ''
+
+    screen.setHandlingInput(async (key) => {
+      // Escape
+      if (key === 'q' || key === '\u001b' || key === '\u0003') {
         screen.remove(newRepoModal)
-        screen.remove(loading)
+        screen.remove(input)
+        screen.setHandlingInput(null)
+        screen.render()
+      }
+
+      // Enter
+      if (key === '\r') {
+        screen.setHandlingInput(null)
+        screen.remove(input)
+        const loading = new Text(
+          (width, height) => 1,
+          (width, height) => height * 0.25 + 3,
+          'Creating...',
+          { color: 'yellow' }
+        )
+        screen.append(loading)
         screen.render()
 
-        renderMainScreen()
-      })
-    }
+        // create a new repo
+        db.createRemote(text).then(() => {
+          screen.remove(newRepoModal)
+          screen.remove(loading)
+          screen.render()
 
-    // backspace
-    if (key === '\u007f') {
-      text = text.slice(0, -1)
-    } else {
-      text += key
-    }
+          renderMainScreen()
+        })
+      }
 
-    input.text = text
+      // backspace
+      if (key === '\u007f') {
+        text = text.slice(0, -1)
+      } else {
+        text += key
+      }
+
+      input.text = text
+      screen.render()
+    })
+
     screen.render()
   })
 
-  screen.render()
-})
+  const main = async () => {
+    await db.ready()
+    await db.openRemotes()
 
-const main = async () => {
-  await db.ready()
-  await db.openRemotes()
+    db.on('connection', (conn) => {
+      screen.render()
+    })
 
-  db.on('connection', (conn) => {
-    screen.render()
-  })
+    renderMainScreen()
+  }
 
-  renderMainScreen()
+  main()
 }
-
-main()
