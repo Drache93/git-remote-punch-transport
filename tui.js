@@ -2,11 +2,12 @@
 /* global Pear */
 
 // const { header, summary, command, flag, arg } = require('paparam')
+const { GitObject } = require('isomorphic-git')
 const { PunchLocalDB } = require('./lib/db')
 const b4a = require('b4a')
 // const Id = require('hypercore-id-encoding')
 // const { Tui, Box, Text, SelectableList, TextInput } = require('./lib/tui')
-// const process = require('process')
+const process = require('process')
 
 const db = new PunchLocalDB()
 
@@ -216,15 +217,28 @@ const main = async () => {
 
   console.log(remote.remoteUrl)
 
-  const data = await remote.getAllRefs()
+  const refs = await remote.getAllRefs()
 
-  console.log(data)
+  const objects = await remote.getRefObjects('a32bdab41f8a3285b64faef6c9b0ac59efba836a')
+
+  console.log(objects)
+  process.env.GIT_DIR = 'test'
+
+  await rebuildRepo({
+    objectFormat: 'sha1', // or 'sha256'?
+    objects,
+    refs: {
+      'refs/heads/main': 'a32bdab41f8a3285b64faef6c9b0ac59efba836a'
+    }
+  })
 
   // db.on('connection', (conn) => {
   //   screen.render()
   // })
 
   // renderMainScreen()
+
+  await db.close()
 }
 
 main()
