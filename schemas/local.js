@@ -18,21 +18,6 @@ punch.register({
       required: true
     },
     {
-      name: 'discoveryKey',
-      type: 'buffer',
-      required: true
-    },
-    {
-      name: 'blobsKey',
-      type: 'buffer',
-      required: true
-    },
-    {
-      name: 'blobsDiscoveryKey',
-      type: 'buffer',
-      required: true
-    },
-    {
       name: 'name',
       type: 'string',
       required: true

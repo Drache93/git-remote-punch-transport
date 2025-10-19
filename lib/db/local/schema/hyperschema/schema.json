@@ -14,24 +14,6 @@
           "version": 1
         },
         {
-          "name": "discoveryKey",
-          "required": true,
-          "type": "buffer",
-          "version": 1
-        },
-        {
-          "name": "blobsKey",
-          "required": true,
-          "type": "buffer",
-          "version": 1
-        },
-        {
-          "name": "blobsDiscoveryKey",
-          "required": true,
-          "type": "buffer",
-          "version": 1
-        },
-        {
           "name": "name",
           "required": true,
           "type": "string",
