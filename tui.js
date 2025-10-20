@@ -5,6 +5,7 @@
 const { GitObject } = require('isomorphic-git')
 const { PunchLocalDB } = require('./lib/db')
 const b4a = require('b4a')
+const { Ref } = require('./lib/ref')
 // const Id = require('hypercore-id-encoding')
 // const { Tui, Box, Text, SelectableList, TextInput } = require('./lib/tui')
 // const process = require('process')
@@ -218,11 +219,11 @@ const main = async () => {
   console.log(remote.remoteUrl)
 
   const refs = await remote.getAllRefs()
-  // console.log(refs)
+  console.log(refs.map((ref) => [ref.ref, ref.oid]))
 
-  const objects = await remote.getRefObjects('a32bdab41f8a3285b64faef6c9b0ac59efba836a')
+  // const objects = await remote.getRefObjects('a32bdab41f8a3285b64faef6c9b0ac59efba836a')
 
-  console.log(objects)
+  // console.log(objects)
 
   // db.on('connection', (conn) => {
   //   screen.render()
