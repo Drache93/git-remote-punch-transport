@@ -13,7 +13,8 @@
   "scripts": {
     "test": "brittle test/*.js",
     "fix": "standard --fix",
-    "schema": "node schemas/local.js && node schemas/remote.js"
+    "schema": "node schemas/local.js && node schemas/remote.js",
+    "postinstall": "patch-package"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "brittle": "^3.18.0",
     "hyperdht": "^6.21.0",
+    "patch-package": "^8.0.1",
     "prettier-config-holepunch": "^2.0.0",
     "standard": "^17.1.2",
     "test-tmp": "^1.4.0"
@@ -48,6 +50,7 @@
     "corestore": "^7.4.5",
     "cross-worker": "^1.2.1",
     "fs": "npm:bare-node-fs",
+    "graceful-goodbye": "^1.3.3",
     "hyperbee": "^2.26.4",
     "hyperbee2": "^1.1.1",
     "hyperblobs": "^2.8.0",
