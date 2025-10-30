@@ -5,33 +5,23 @@ const tmp = require('test-tmp')
 const Corestore = require('corestore')
 
 const { PunchLocalDB } = require('../lib/db')
+const { Ref } = require('../lib/ref')
 
 test('replicates', async function (t) {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const swarm1 = new Hyperswarm({ bootstrap })
-  const swarm2 = new Hyperswarm({ bootstrap })
-
-  const store1 = await createStore(t)
-  const store2 = await createStore(t)
-
   const db1 = new PunchLocalDB({
     repo: 'test',
-    swarm: swarm1,
-    store: store1
+    swarm: new Hyperswarm({ bootstrap }),
+    store: await createStore(t)
   })
   const db2 = new PunchLocalDB({
     repo: 'test',
-    swarm: swarm2,
-    store: store2
+    swarm: new Hyperswarm({ bootstrap }),
+    store: await createStore(t)
   })
 
   t.teardown(() => {
-    swarm1.destroy()
-    swarm2.destroy()
-    store1.close()
-    store2.close()
-
     db1.close()
     db2.close()
   })
@@ -40,61 +30,36 @@ test('replicates', async function (t) {
   await db2.ready()
 
   const remote = await db1.createRemote('test')
+  const remote2 = await db2.joinRemote('test', remote.key)
 
-  await db2.joinRemote('test', remote._db.core.key, remote._db.core.discoveryKey)
-
-  const config1 = await db1.getRemote('test').getConfig()
-  const config2 = await db2.getRemote('test').getConfig()
-
-  t.alike(config1, config2, 'config should equal')
-
-  // Add fake object
-  const batch = await db1.getRemote('test')._blobs.batch()
-  const buffer = Buffer.from('test')
-  const id = await batch.put(buffer)
-
+  const data = Buffer.from('hello world')
   const objectData = {
-    oid: '123',
-    blobId: id,
     type: 'blob',
-    size: buffer.length,
-    refOid: '789'
+    size: data.length,
+    data
   }
-  await db1.getRemote('test').addObject(objectData)
-  await batch.flush()
+  const writer = remote.pushObjects()
+  writer.put('123', objectData)
+  await writer.flush()
+  await remote.putRef(new Ref('main', 'abc'), ['123'])
 
-  await db2.getRemote('test')._db.core.get(4)
-  await db2.getRemote('test')._db.update()
+  await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  t.is(db2.getRemote('test').availabePeers, 1, 'should have 1 peer')
+  // await db2.getRemote('test')._bee.core.get(0)
+  // await db2.getRemote('test')._bee.update()
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  t.is(remote.availabePeers, 1, 'should have 1 peer')
 
-  t.pass('blobs updated')
+  const objects = await remote2.getRefObjects('abc')
 
-  const objectResult = await db1.getRemote('test').getObject('123')
-  t.alike(objectResult, objectData, 'object should equal')
-  const blob = await db1.getRemote('test').getBlob(id)
-  t.alike(blob, buffer, 'blob should equal')
-
-  //  Check that the object is replicated
-  const objectResult2 = await db2.getRemote('test').getObject('123')
-  t.alike(objectResult2, objectData, 'object should equal from remote 2')
-
-  t.alike(id, {
-    blockOffset: 0,
-    blockLength: 1,
-    byteOffset: 0,
-    byteLength: 4
-  }, 'id should equal')
-
-  await db2.getRemote('test')._blobs.core.update()
-
-  const blob2 = await db2.getRemote('test').getBlob(id)
-  t.alike(blob2, buffer, 'blob should equal from remote 2')
+  t.is(objects.length, 1, 'should have 1 object')
+  t.is(objects[0].id, '123', 'should have correct id')
+  t.is(objects[0].type, 'blob', 'should have correct type')
+  t.is(objects[0].size, 11, 'should have correct size')
+  t.is(objects[0].data.toString(), 'hello world', 'should have correct data')
 })
 
-async function createStore (t) {
+async function createStore(t) {
   const dir = await tmp(t)
   const store = new Corestore(dir)
   t.teardown(() => store.close())
