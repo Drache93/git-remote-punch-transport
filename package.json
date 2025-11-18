@@ -8,7 +8,7 @@
   },
   "main": "runtime.js",
   "bin": {
-    "git-remote-punch": "index.js"
+    "git-remote-git+pear": "index.js"
   },
   "scripts": {
     "test": "brittle test/*.js",

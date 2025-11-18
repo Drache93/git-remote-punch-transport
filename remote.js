@@ -22,20 +22,21 @@ let url = argv[5]
 // Get the config from the url
 let config = {}
 try {
-  if (!url.includes('punch://')) {
+  if (!url.includes('git+pear://')) {
     // Search for it in the args
     process.stderr.write('Searching for config...\n')
-    const urlIdx = argv.findIndex((arg) => arg.startsWith('punch://'))
+    const urlIdx = argv.findIndex((arg) => arg.startsWith('git+pear://'))
     url = argv[urlIdx]
     remote = argv[urlIdx - 1]
 
     if (!url) {
-      process.abort('Punch url could not be found in args')
+      console.error('Punch url could not be found in args')
+      process.exit(1)
     }
   }
 
   // @todo do we need the `/<repo>` part?
-  const value = url.replace('punch://', '').trim().split('/')[0]
+  const value = url.replace('git+pear://', '').trim().split('/')[0]
   const configBuffer = b4a.from(value, 'hex')
   config = cenc.decode(repoConfig, configBuffer) || {}
 } catch (error) {
