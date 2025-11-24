@@ -4,15 +4,27 @@
   "description": "Git over holepunch remote helper.",
   "pear": {
     "name": "git-remote-punch",
-    "type": "terminal"
+    "type": "desktop",
+    "pre": "pear-electron/pre",
+    "gui": {
+      "width": "1024",
+      "height": "768"
+    },
+    "stage": {
+      "ignore": [
+        ".git",
+        ".vscode",
+        "example",
+        "test"
+      ]
+    }
   },
-  "main": "runtime.js",
   "bin": {
-    "git-remote-git+pear": "index.js"
+    "git-remote-git+pear": "bin.js"
   },
   "scripts": {
     "test": "brittle test/*.js",
-    "fix": "standard --fix",
+    "fix": "prettier --write",
     "schema": "node schemas/local.js && node schemas/remote.js",
     "postinstall": "patch-package"
   },
@@ -26,6 +38,44 @@
     "prettier-config-holepunch": "^2.0.0",
     "standard": "^17.1.2",
     "test-tmp": "^1.4.0"
+  },
+  "imports": {
+    "buffer": {
+      "bare": "bare-buffer",
+      "default": "buffer"
+    },
+    "child_process": {
+      "bare": "bare-subprocess",
+      "default": "child_process"
+    },
+    "fs": {
+      "bare": "bare-fs",
+      "default": "fs"
+    },
+    "path": {
+      "bare": "bare-path",
+      "default": "path"
+    },
+    "net": {
+      "bare": "bare-net",
+      "default": "net"
+    },
+    "os": {
+      "bare": "bare-os",
+      "default": "os"
+    },
+    "process": {
+      "bare": "bare-process",
+      "default": "process"
+    },
+    "readline": {
+      "bare": "bare-readline",
+      "default": "readline"
+    },
+    "tty": {
+      "bare": "bare-tty",
+      "default": "tty"
+    }
   },
   "dependencies": {
     "@holepunchto/bare-translations": "^0.2.1",
@@ -42,14 +92,11 @@
     "bare-subprocess": "^5.1.0",
     "bare-tty": "^5.0.2",
     "blind-peering": "^1.10.1",
-    "buffer": "npm:bare-buffer",
-    "child_process": "npm:bare-node-child-process",
     "compact-encoding": "^2.16.1",
     "compact-encoding-net": "^1.2.0",
     "compact-encoding-struct": "^1.3.0",
     "corestore": "^7.4.5",
     "cross-worker": "^1.2.1",
-    "fs": "npm:bare-node-fs",
     "graceful-goodbye": "^1.3.3",
     "hyperbee": "^2.26.4",
     "hyperbee2": "^1.1.1",
@@ -61,26 +108,17 @@
     "hyperswarm": "^4.14.0",
     "isomorphic-git": "^1.33.0",
     "keet-identity-key": "^3.1.0",
-    "net": "npm:bare-node-net",
     "ora": "^8.2.0",
-    "os": "npm:bare-node-os",
     "paparam": "^1.8.6",
-    "path": "npm:bare-node-path",
+    "pear-bridge": "^1.2.4",
+    "pear-electron": "^1.7.25",
     "pear-inspect": "^1.2.5",
     "pear-pipe": "^1.0.1",
     "pear-run": "^1.0.0",
-    "process": "npm:bare-node-process",
     "protomux-wakeup": "^2.6.1",
-    "readline": "npm:bare-readline",
     "ready-resource": "^1.1.2",
     "rocksdb-native": "^3.7.5",
-    "secure-prompt": "github:drache93/secure-prompt#0eb311b",
-    "sodium-native": "^5.0.9",
-    "tty": "npm:bare-node-tty"
-  },
-  "directories": {
-    "lib": "lib",
-    "test": "test"
+    "sodium-native": "^5.0.9"
   },
   "repository": {
     "type": "git",

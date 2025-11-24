@@ -1,21 +1,19 @@
-#!/usr/bin/env node
-const run = require('pear-run')
+const Runtime = require('pear-electron')
+const Bridge = require('pear-bridge')
 
-const url = 'pear://1y7g19xae7ohpeh9x45p7j1iz4hpqrpmdi7dq4m5rebfwji5koby'
+const run = async () => {
+  const bridge = new Bridge()
+  await bridge.ready()
 
-const punchGitArgs = process.argv.slice(2)
-class API {
-  static RUNTIME = 'pear'
-  static RTI = {}
-  static RUNTIME_ARGV = []
-  app = {
-    applink: url
-  }
+  const runtime = new Runtime()
+  const pipe = await runtime.start({ bridge })
+  pipe.on('close', () => Pear.exit())
+
+  pipe.on('data', (data) => {
+    const cmd = Buffer.from(data).toString()
+    if (cmd === 'hello from ui') pipe.write('sweet bidirectionality')
+    console.log('PIPE DATA', data + '')
+  })
 }
 
-// TODO: add an arg to run locally
-const link = url
-global.Pear = new API()
-
-// ? run direct and let it stdout/stderr itself?
-run(link, punchGitArgs)
+run()

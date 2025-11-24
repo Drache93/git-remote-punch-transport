@@ -3,6 +3,8 @@
 
 const { header, summary, command, validate, arg } = require('paparam')
 const { PunchLocalDB } = require('./lib/db')
+const process = require('process')
+
 const goodbye = require('graceful-goodbye')
 
 const green = (text) => `\x1b[32m${text}\x1b[0m`
@@ -80,7 +82,8 @@ const cmd = command(
   summary('Git Remote Punch allows you to manage your Git repositories. No servers, just Peers.'),
   newRepo,
   listRepos,
-  seedRemotes
+  seedRemotes,
+  () => console.log(cmd.help())
 )
 
-cmd.parse()
+cmd.parse(process.argv.slice(3))
