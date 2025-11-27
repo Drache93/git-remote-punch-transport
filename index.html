@@ -2,10 +2,57 @@
 <html>
   <head>
     <script src="./gui/index.js" type="module"></script>
+    <style>
+      body {
+        color: rgb(255, 255, 254);
+        font-family: 'abcFavorit', 'abcFavorit Fallback', system-ui, arial;
+        height: 100vh;
+        margin: 0;
+      }
+
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #bade5b #bade5b;
+      }
+
+      main {
+        padding: 12px;
+        height: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      main > div {
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        padding: 12px 24px;
+        height: 100%;
+      }
+      .join-remote {
+        width: 100%;
+        padding: 12px 12px;
+        border: 1px solid #bade5b;
+        border-radius: 8px;
+        background-color: transparent;
+        color: #bade5b;
+        box-sizing: border-box;
+      }
+
+      remotes-list,
+      remote-details,
+      repo-files,
+      hr {
+        width: 100%;
+      }
+
+      repo-files {
+        overflow: hidden;
+        flex: 1 1 auto;
+      }
+    </style>
   </head>
   <body>
-    Hello Git!
-
     <main></main>
   </body>
 </html>

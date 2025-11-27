@@ -48,7 +48,7 @@ test('replicates', async function (t) {
   // await db2.getRemote('test')._bee.core.get(0)
   // await db2.getRemote('test')._bee.update()
 
-  t.is(remote.availabePeers, 1, 'should have 1 peer')
+  t.is(remote.availablePeers, 1, 'should have 1 peer')
 
   const objects = await remote2.getRefObjects('abc')
 

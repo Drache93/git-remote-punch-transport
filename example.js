@@ -15,7 +15,7 @@ const main = async () => {
   await local.ready()
   const remote = await local.joinRemote('punch', config.key)
 
-  console.log(remote.availabePeers)
+  console.log(remote.availablePeers)
   console.log(remote._db.core)
 }
 

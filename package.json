@@ -10,6 +10,7 @@
       "width": "1024",
       "height": "768"
     },
+    "routes": ".",
     "stage": {
       "ignore": [
         ".git",
@@ -113,6 +114,7 @@
     "pear-bridge": "^1.2.4",
     "pear-electron": "^1.7.25",
     "pear-inspect": "^1.2.5",
+    "pear-link": "^4.2.1",
     "pear-pipe": "^1.0.1",
     "pear-run": "^1.0.0",
     "protomux-wakeup": "^2.6.1",
