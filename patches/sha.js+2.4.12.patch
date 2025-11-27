@@ -1,0 +1,78 @@
+diff --git a/node_modules/sha.js/sha.js b/node_modules/sha.js/sha.js
+index fdfe4c1..5f6f4b8 100644
+--- a/node_modules/sha.js/sha.js
++++ b/node_modules/sha.js/sha.js
+@@ -10,7 +10,7 @@
+ 
+ var inherits = require('inherits');
+ var Hash = require('./hash');
+-var Buffer = require('safe-buffer').Buffer;
++var Buffer = require('bare-buffer').Buffer;
+ 
+ var K = [
+ 	0x5a827999, 0x6ed9eba1, 0x8f1bbcdc | 0, 0xca62c1d6 | 0
+diff --git a/node_modules/sha.js/sha1.js b/node_modules/sha.js/sha1.js
+index 0891453..9df0057 100644
+--- a/node_modules/sha.js/sha1.js
++++ b/node_modules/sha.js/sha1.js
+@@ -11,7 +11,7 @@
+ 
+ var inherits = require('inherits');
+ var Hash = require('./hash');
+-var Buffer = require('safe-buffer').Buffer;
++var Buffer = require('bare-buffer').Buffer;
+ 
+ var K = [
+ 	0x5a827999, 0x6ed9eba1, 0x8f1bbcdc | 0, 0xca62c1d6 | 0
+diff --git a/node_modules/sha.js/sha224.js b/node_modules/sha.js/sha224.js
+index 9cd0702..d6343ef 100644
+--- a/node_modules/sha.js/sha224.js
++++ b/node_modules/sha.js/sha224.js
+@@ -11,7 +11,7 @@
+ var inherits = require('inherits');
+ var Sha256 = require('./sha256');
+ var Hash = require('./hash');
+-var Buffer = require('safe-buffer').Buffer;
++var Buffer = require('bare-buffer').Buffer;
+ 
+ var W = new Array(64);
+ 
+diff --git a/node_modules/sha.js/sha256.js b/node_modules/sha.js/sha256.js
+index 6741589..a933657 100644
+--- a/node_modules/sha.js/sha256.js
++++ b/node_modules/sha.js/sha256.js
+@@ -10,7 +10,7 @@
+ 
+ var inherits = require('inherits');
+ var Hash = require('./hash');
+-var Buffer = require('safe-buffer').Buffer;
++var Buffer = require('bare-buffer').Buffer;
+ 
+ var K = [
+ 	0x428A2F98,
+diff --git a/node_modules/sha.js/sha384.js b/node_modules/sha.js/sha384.js
+index ad260dd..5fff2e0 100644
+--- a/node_modules/sha.js/sha384.js
++++ b/node_modules/sha.js/sha384.js
+@@ -3,7 +3,7 @@
+ var inherits = require('inherits');
+ var SHA512 = require('./sha512');
+ var Hash = require('./hash');
+-var Buffer = require('safe-buffer').Buffer;
++var Buffer = require('bare-buffer').Buffer;
+ 
+ var W = new Array(160);
+ 
+diff --git a/node_modules/sha.js/sha512.js b/node_modules/sha.js/sha512.js
+index 9328a76..0699b0d 100644
+--- a/node_modules/sha.js/sha512.js
++++ b/node_modules/sha.js/sha512.js
+@@ -2,7 +2,7 @@
+ 
+ var inherits = require('inherits');
+ var Hash = require('./hash');
+-var Buffer = require('safe-buffer').Buffer;
++var Buffer = require('bare-buffer').Buffer;
+ 
+ var K = [
+ 	0x428a2f98,
