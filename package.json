@@ -4,18 +4,21 @@
   "description": "Git over holepunch remote helper.",
   "pear": {
     "name": "git-remote-punch",
-    "type": "desktop",
     "pre": "pear-electron/pre",
     "gui": {
       "width": "1024",
       "height": "768"
     },
-    "routes": ".",
+    "routes": {
+      "remote": "remote.js",
+      "tui": "tui.js"
+    },
     "stage": {
       "ignore": [
         ".git",
         ".vscode",
         "example",
+        "example.js",
         "test"
       ]
     }
