@@ -19,18 +19,23 @@ const argv = process.argv.slice(0)
 let remote = argv[4]
 let url = argv[5]
 
+if (!url) {
+  console.error('Remote url required')
+  process.exit(1)
+}
+
 // Get the config from the url
 let config = {}
 try {
   if (!url.includes('git+pear://')) {
     // Search for it in the args
-    process.stderr.write('Searching for config...\n')
+    process.stderr.write('Searching for config...\n') // ? remove?
     const urlIdx = argv.findIndex((arg) => arg.startsWith('git+pear://'))
     url = argv[urlIdx]
     remote = argv[urlIdx - 1]
 
     if (!url) {
-      console.error('Punch url could not be found in args')
+      console.error('Remote url could not be found in args')
       process.exit(1)
     }
   }
@@ -40,7 +45,7 @@ try {
   const configBuffer = b4a.from(value, 'hex')
   config = cenc.decode(repoConfig, configBuffer) || {}
 } catch (error) {
-  throw new Error(`Invalid punch url: ${url}: ${error.message}`)
+  throw new Error(`Invalid remote url: ${url}: ${error.message}`)
 }
 
 const capabilities = () => {

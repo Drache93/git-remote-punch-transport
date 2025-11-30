@@ -26,6 +26,7 @@ if (Pear.app.query) {
 
 // -- Need to wait for db to be available
 
+// TODO: move to component
 function render() {
   document.querySelector('main').outerHTML = html`
     <main>
