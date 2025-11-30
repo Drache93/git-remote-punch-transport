@@ -110,7 +110,7 @@
     "hyperdb": "^4.16.1",
     "hyperschema": "^1.14.0",
     "hyperswarm": "^4.14.0",
-    "isomorphic-git": "^1.33.0",
+    "isomorphic-git": "1.33.0",
     "keet-identity-key": "^3.1.0",
     "ora": "^8.2.0",
     "paparam": "^1.8.6",
