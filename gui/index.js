@@ -7,6 +7,7 @@ import { html } from './components/helpers'
 
 // Register components
 import './components'
+import { decodeUrl } from '../lib/messages'
 
 console.log('route', Pear.app.query)
 
@@ -37,16 +38,17 @@ function render() {
             <repo-files ref="main"></repo-files>
           </div>`
         : html`<div>
-            <input class="join-remote" placeholder="Join a remote"></input>
+            <add-remote></add-remote>
             <remotes-list></remotes-list>
-            </>`}
+          </div>`}
     </main>
   `
 }
 
 async function loadRemote(url) {
-  const [key, name] = url.slice(12).split('/')
-  const remote = await globalThis.db.openRemote(name, key)
+  const config = decodeUrl(url)
+  console.log('loading', config)
+  const remote = await globalThis.db.openRemote(config)
 
   return remote
 }

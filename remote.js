@@ -6,7 +6,7 @@ const readline = require('readline')
 const cenc = require('compact-encoding')
 const b4a = require('b4a')
 const { PunchGit } = require('./lib/punch.js')
-const { repoConfig } = require('./lib/messages.js')
+const { RepoConfig } = require('./lib/messages.js')
 const process = require('process')
 const pipe = require('pear-pipe')()
 
@@ -43,7 +43,7 @@ try {
   // @todo do we need the `/<repo>` part?
   const value = url.replace('git+pear://', '').trim().split('/')[0]
   const configBuffer = b4a.from(value, 'hex')
-  config = cenc.decode(repoConfig, configBuffer) || {}
+  config = cenc.decode(RepoConfig, configBuffer) || {}
 } catch (error) {
   throw new Error(`Invalid remote url: ${url}: ${error.message}`)
 }

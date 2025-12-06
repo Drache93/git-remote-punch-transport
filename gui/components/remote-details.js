@@ -4,9 +4,6 @@ import { css, html } from './helpers'
 
 class RemoteDetails extends HTMLElement {
   #shadow = null
-  #selectedDir = null
-  #openFile = null
-  #previousDir = []
   #remote = null
 
   constructor() {

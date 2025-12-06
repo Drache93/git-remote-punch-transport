@@ -30,7 +30,7 @@ test('replicates', async function (t) {
   await db2.ready()
 
   const remote = await db1.createRemote('test')
-  const remote2 = await db2.joinRemote('test', remote.key)
+  const remote2 = await db2.joinRemote({ name: 'test', key: remote.key })
 
   const data = Buffer.from('hello world')
   const objectData = {

@@ -1,2 +1,2 @@
-export const css = (strings, ...values) => String.raw({ raw: strings }, ...values)
-export const html = (strings, ...values) => String.raw({ raw: strings }, ...values)
+export const css = String.raw
+export const html = String.raw

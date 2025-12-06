@@ -24,7 +24,8 @@
     }
   },
   "bin": {
-    "git-remote-git+pear": "bin.js"
+    "git-remote-git+pear": "bin.js",
+    "gp": "bin-tui.ts"
   },
   "scripts": {
     "test": "brittle test/*.js",
@@ -123,7 +124,8 @@
     "protomux-wakeup": "^2.6.1",
     "ready-resource": "^1.1.2",
     "rocksdb-native": "^3.7.5",
-    "sodium-native": "^5.0.9"
+    "sodium-native": "^5.0.9",
+    "z32": "^1.1.0"
   },
   "repository": {
     "type": "git",

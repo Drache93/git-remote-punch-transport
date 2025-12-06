@@ -2,7 +2,7 @@
 /* global Pear */
 
 const { header, summary, command, validate, arg } = require('paparam')
-const { PunchLocalDB } = require('./lib/db')
+const { PunchLocalDB } = require('./lib/db/index.cjs')
 const process = require('process')
 
 const goodbye = require('graceful-goodbye')
