@@ -1,7 +1,7 @@
 import { Back, Peers } from './icons'
 import { css, html } from './helpers'
 
-class RemoteDetails extends HTMLElement {
+class RemoteOptions extends HTMLElement {
   #shadow = null
   #remote = null
 
@@ -21,23 +21,22 @@ class RemoteDetails extends HTMLElement {
         height: 32px;
       }
 
-      .peers {
-        position: absolute;
-        right: 0;
-        top: 0;
+      i {
         display: flex;
         align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 0;
+        top: 0;
 
-        & span {
-          margin-left: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        & > svg {
           width: 32px;
           height: 32px;
-          border: 1px solid #bade5b;
-          font-size: 12px;
-          border-radius: 100%;
+        }
+
+        & > svg:hover {
+          cursor: pointer;
+          fill: rgba(186, 222, 91, 0.6);
         }
       }
 
@@ -59,14 +58,23 @@ class RemoteDetails extends HTMLElement {
     const div = document.createElement('div')
     this.#shadow.appendChild(div)
 
-    const peers = document.createElement('div')
-    div.append(peers)
+    const button = document.createElement('i')
+    button.innerHTML = Back
+    button.onclick = () => {
+      this.#shadow.dispatchEvent(
+        new CustomEvent('navigate', {
+          bubbles: true,
+          composed: true,
+          detail: '/'
+        })
+      )
+    }
 
-    peers.outerHTML = html`<div class="peers" title="Number of connected peers">
-      ${Peers}
-      <span>${this.#remote.availablePeers > 99 ? `99>` : this.#remote.availablePeers}</span>
-    </div>`
+    const title = document.createElement('span')
+    title.innerText = this.#remote.name
+
+    div.append(button, title)
   }
 }
 
-window.customElements.define('remote-details', RemoteDetails)
+window.customElements.define('remote-options', RemoteOptions)

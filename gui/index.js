@@ -33,9 +33,10 @@ function render() {
     <main>
       ${globalThis.openedRemote
         ? html`<div>
-            <remote-details></remote-details>
+            <remote-options></remote-options>
             <hr />
             <repo-files ref="main"></repo-files>
+            <remote-details></remote-details>
           </div>`
         : html`<div>
             <add-remote></add-remote>

@@ -1,4 +1,5 @@
 import './files'
 import './remotes'
 import './remote-details'
+import './remote-options'
 import './add-remote'
