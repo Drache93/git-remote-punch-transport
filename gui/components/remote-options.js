@@ -154,11 +154,6 @@ class RemoteOptions extends HTMLElement {
                 <button class="copy-btn" id="copy-btn">Copy</button>
               </div>
             </div>
-
-            <div class="dropdown-section">
-              <div class="dropdown-label">Clone to Directory</div>
-              <button class="select-dir-btn" id="select-dir-btn">Select Directory...</button>
-            </div>
           </div>
         </div>
       </div>
@@ -200,18 +195,18 @@ class RemoteOptions extends HTMLElement {
       }, 2000)
     }
 
-    selectDirBtn.onclick = async () => {
-      try {
-        const dirHandle = await window.showDirectoryPicker()
-        console.log('Selected directory:', dirHandle.get)
-        selectDirBtn.textContent = `[WIP] Cloning to ${dirHandle.name}...`
-        // TODO: Implement actual clone logic here
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          console.error('Error selecting directory:', err)
-        }
-      }
-    }
+    // selectDirBtn.onclick = async () => {
+    //   try {
+    //     const dirHandle = await window.showDirectoryPicker()
+    //     console.log('Selected directory:', dirHandle.get)
+    //     selectDirBtn.textContent = `[WIP] Cloning to ${dirHandle.name}...`
+    //     // TODO: Implement actual clone logic here
+    //   } catch (err) {
+    //     if (err.name !== 'AbortError') {
+    //       console.error('Error selecting directory:', err)
+    //     }
+    //   }
+    // }
 
     document.addEventListener('click', (e) => {
       if (!cloneContainer.contains(e.target) && this.#dropdownOpen) {
