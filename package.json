@@ -25,7 +25,7 @@
   },
   "bin": {
     "git-remote-git+pear": "bin.js",
-    "gp": "bin-tui.ts"
+    "gp": "bin-tui.js"
   },
   "scripts": {
     "test": "brittle test/*.js",
