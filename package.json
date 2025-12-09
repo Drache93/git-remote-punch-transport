@@ -39,7 +39,6 @@
   "devDependencies": {
     "brittle": "^3.18.0",
     "hyperdht": "^6.21.0",
-    "patch-package": "^8.0.1",
     "prettier-config-holepunch": "^2.0.0",
     "standard": "^17.1.2",
     "test-tmp": "^1.4.0"
@@ -114,6 +113,7 @@
     "keet-identity-key": "^3.1.0",
     "ora": "^8.2.0",
     "paparam": "^1.8.6",
+    "patch-package": "^8.0.1",
     "pear-bridge": "^1.2.4",
     "pear-electron": "^1.7.25",
     "pear-inspect": "^1.2.5",
