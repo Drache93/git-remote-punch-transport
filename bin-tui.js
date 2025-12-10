@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const run = require('pear-run')
 
 const url = 'pear://1y7g19xae7ohpeh9x45p7j1iz4hpqrpmdi7dq4m5rebfwji5koby/tui'
 
@@ -17,5 +16,6 @@ class API {
 const link = url
 global.Pear = new API()
 
+const run = require('pear-run')
 // ? run direct and let it stdout/stderr itself?
 run(link, punchGitArgs)
