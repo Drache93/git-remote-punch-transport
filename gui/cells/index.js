@@ -86,7 +86,7 @@ class FileTree extends Cell {
     this.files = opts.files || {}
   }
 
-  _renderEntries(files) {
+  _renderEntries(files, parent = '') {
     const sorted = Object.values(files).sort((a, b) => {
       if (a.type === b.type) return a.path.localeCompare(b.path)
       return a.type === 'tree' ? -1 : 1
@@ -96,8 +96,8 @@ class FileTree extends Cell {
       if (entry.type === 'tree') {
         return html`
           <detail class="tree-entry tree-dir">
-            <summary class="tree-row">${entry.path}</summary>
-            <div class="tree-children-wrap">${this._renderEntries(entry.files)}</div>
+            <summary class="tree-row">${entry.path.replace(parent + '/', '')}</summary>
+            <div class="tree-children-wrap">${this._renderEntries(entry.files, entry.path)}</div>
           </detail>
         `
       }
@@ -145,7 +145,7 @@ class FileTree extends Cell {
             flex-direction: row;
             align-items: center;
             gap: 0.35rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.35rem;
             color: #00c950;
             cursor: pointer;
             user-select: none;
@@ -171,13 +171,12 @@ class FileTree extends Cell {
           }
 
           .tree-children-wrap {
-            padding: 0.25rem 0.5rem 0.25rem 1rem;
+            padding-left: 0.75rem;
             border-left: 1px solid #1a5a2a;
-            margin-left: 0.5rem;
           }
 
           .tree-blob.tree-entry {
-            padding: 0.15rem 0.5rem;
+            padding: 0.15rem 0.35rem;
           }
 
           .tree-row {
