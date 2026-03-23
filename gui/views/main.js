@@ -1,27 +1,17 @@
-const {
-  Text,
-  App,
-  Container,
-  Cellery,
-  Input,
-  Spacing,
-  Color,
-  Alignment,
-  Size,
-  Cell
-} = require('cellery')
+const { cellery: html } = require('cellery')
 
-const app = new App({
-  children: [
-    new Container({
-      id: 'main',
-      flex: Container.FlexAuto,
-      scroll: Container.ScrollVertical,
-      padding: Spacing.all(1),
-      alignment: Alignment.Horizontal({}),
-      children: [new Text({ value: 'Loading...' })]
-    })
-  ]
-})
+const app = html`<>
+  <style>
+    #main {
+        flex: 1 1 auto;
+        display: flex;
+        flex-flow: row;
+        padding: 1em;
+    }
+  </style>
+  <div id="main">
+      <p>Loading...</p>
+  </div>
+</>`
 
 module.exports = { app }
