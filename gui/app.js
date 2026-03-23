@@ -9,7 +9,7 @@ const { Text } = require('cellery')
 const { PunchLocalDB } = require('../lib/db/index.cjs')
 
 const target = require('#target')
-const { Repo, RepoView, FileTree } = require('./cells')
+const { Repo, RepoView, FileTree, RepoHeader } = require('./cells')
 const { app } = require('./views/main')
 const { Transform } = require('streamx')
 
@@ -69,7 +69,7 @@ const machine = new Coremachine(
               if (!db.opened) await db.ready()
 
               for await (const repo of db.getRemotes({ name: ctx.openRepo }, { limit: 1 })) {
-                const cell = new RepoView({ repo })
+                const cell = new RepoHeader({ repo })
                 cell.render({ id: 'main', insert: 'beforeend', clear: true })
 
                 const fileTree = await repo.getBranchFileTree('main')
