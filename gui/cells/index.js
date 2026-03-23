@@ -83,37 +83,70 @@ class RepoHeader extends Cell {
 class FileTree extends Cell {
   constructor(opts = {}) {
     super(opts)
-    this.files = opts.files || {}
+    this.drive = opts.drive
+    this._paths = []
   }
 
-  _renderEntries(files, parent = '') {
-    const sorted = Object.values(files).sort((a, b) => {
-      if (a.type === b.type) return a.path.localeCompare(b.path)
-      return a.type === 'tree' ? -1 : 1
-    })
+  async load() {
+    for await (const key of this.drive.list('/')) {
+      this._paths.push(key)
+    }
+  }
 
-    return sorted.map((entry) => {
-      if (entry.type === 'tree') {
+  _buildTree() {
+    const root = {}
+
+    for (const key of this._paths) {
+      const parts = key.slice(1).split('/')
+      let node = root
+
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!node[parts[i]]) node[parts[i]] = {}
+        node = node[parts[i]]
+      }
+
+      node[parts[parts.length - 1]] = null
+    }
+
+    return root
+  }
+
+  _renderNode(node) {
+    const dirs = []
+    const files = []
+
+    for (const name of Object.keys(node)) {
+      if (node[name] !== null) {
+        dirs.push(name)
+      } else {
+        files.push(name)
+      }
+    }
+
+    dirs.sort()
+    files.sort()
+
+    return [...dirs, ...files].map((name) => {
+      if (node[name] !== null) {
         return html`
-          <detail class="tree-entry tree-dir">
-            <summary class="tree-row">${entry.path.replace(parent + '/', '')}</summary>
-            <div class="tree-children-wrap">${this._renderEntries(entry.files, entry.path)}</div>
-          </detail>
+          <details class="tree-dir">
+            <summary class="tree-row">${name}</summary>
+            <div class="tree-children">${this._renderNode(node[name])}</div>
+          </details>
         `
       }
 
       return html`
-        <div class="tree-entry tree-blob">
-          <div class="tree-row">
-            <span class="tree-icon"> </span>
-            <span class="tree-name">${entry.path}</span>
-          </div>
+        <div class="tree-blob">
+          <span class="tree-name">${name}</span>
         </div>
       `
     })
   }
 
   _render() {
+    const tree = this._buildTree()
+
     return html`
       <div id="${this.id}">
         <style>
@@ -142,7 +175,6 @@ class FileTree extends Cell {
 
           summary.tree-row {
             display: flex;
-            flex-direction: row;
             align-items: center;
             gap: 0.35rem;
             padding: 0.2rem 0.35rem;
@@ -157,7 +189,6 @@ class FileTree extends Cell {
             color: #1a8a3a;
             width: 0.75rem;
             flex-shrink: 0;
-            transition: transform 0.1s;
           }
 
           details[open] > summary.tree-row::before {
@@ -170,41 +201,23 @@ class FileTree extends Cell {
             background: #0a1f0a;
           }
 
-          .tree-children-wrap {
+          .tree-children {
             padding-left: 0.75rem;
             border-left: 1px solid #1a5a2a;
           }
 
-          .tree-blob.tree-entry {
+          .tree-blob {
             padding: 0.15rem 0.35rem;
-          }
-
-          .tree-row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.1rem 0;
-          }
-
-          .tree-icon {
-            color: #1a8a3a;
-            width: 0.75rem;
-            flex-shrink: 0;
-            padding-right: 0.5em;
-          }
-
-          .tree-blob > .tree-row > .tree-name {
             color: #00c950;
           }
 
-          .tree-blob:hover > .tree-row > .tree-name {
+          .tree-blob:hover {
             color: #ffffff;
             cursor: pointer;
           }
         </style>
 
-        <div class="tree-root">${this._renderEntries(this.files)}</div>
+        <div class="tree-root">${this._renderNode(tree)}</div>
       </div>
     `
   }

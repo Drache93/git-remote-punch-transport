@@ -9,7 +9,7 @@ const { Text } = require('cellery')
 const { PunchLocalDB } = require('../lib/db/index.cjs')
 
 const target = require('#target')
-const { Repo, RepoView, FileTree, RepoHeader } = require('./cells')
+const { Repo, FileTree, RepoHeader } = require('./cells')
 const { app } = require('./views/main')
 const { Transform } = require('streamx')
 
@@ -72,18 +72,12 @@ const machine = new Coremachine(
                 const cell = new RepoHeader({ repo })
                 cell.render({ id: 'main', insert: 'beforeend', clear: true })
 
-                const fileTree = await repo.getBranchFileTree('main')
-                const treeCell = new FileTree({ id: 'file-tree', files: fileTree.files })
-                treeCell.render({ id: 'main', insert: 'beforeend' })
+                const drive = await repo.toDrive('main')
+                if (!drive) return
 
-                for (const f of Object.values(fileTree.files)) {
-                  if (f.type !== 'tree') continue
-                  treeCell.cellery.pub({
-                    event: 'register',
-                    id: `dir-${f.path}`,
-                    targets: ['click']
-                  })
-                }
+                const treeCell = new FileTree({ id: 'file-tree', drive })
+                await treeCell.load()
+                treeCell.render({ id: 'main', insert: 'beforeend' })
               }
             }
           }
