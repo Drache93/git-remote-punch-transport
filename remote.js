@@ -3,10 +3,8 @@
 /* global Pear */
 
 const readline = require('readline')
-const cenc = require('compact-encoding')
-const b4a = require('b4a')
 const { PunchGit } = require('./lib/punch.js')
-const { RepoConfig, decodeUrl } = require('./lib/messages.js')
+const { decodeUrl } = require('./lib/messages.js')
 const process = require('process')
 const pipe = require('pear-pipe')()
 

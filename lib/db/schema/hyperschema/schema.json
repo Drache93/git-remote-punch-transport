@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "schema": [
+    {
+      "name": "repos",
+      "namespace": "punch",
+      "compact": true,
+      "flagsPosition": 2,
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "key",
+          "required": true,
+          "type": "buffer",
+          "version": 1
+        },
+        {
+          "name": "description",
+          "required": false,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "lastPushed",
+          "required": false,
+          "type": "uint",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "branches",
+      "namespace": "punch",
+      "compact": true,
+      "flagsPosition": 3,
+      "fields": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "commitOid",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "treeOid",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "author",
+          "required": false,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "message",
+          "required": false,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "timestamp",
+          "required": false,
+          "type": "uint",
+          "version": 1
+        },
+        {
+          "name": "objects",
+          "array": true,
+          "type": "string",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "files",
+      "namespace": "punch",
+      "compact": true,
+      "flagsPosition": 5,
+      "fields": [
+        {
+          "name": "branch",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "path",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "oid",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "mode",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "size",
+          "required": true,
+          "type": "uint",
+          "version": 1
+        },
+        {
+          "name": "author",
+          "required": false,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "message",
+          "required": false,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "timestamp",
+          "required": false,
+          "type": "uint",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "object-type",
+      "namespace": "punch",
+      "offset": 1,
+      "enum": [
+        {
+          "key": "blob",
+          "version": 1
+        },
+        {
+          "key": "tree",
+          "version": 1
+        },
+        {
+          "key": "commit",
+          "version": 1
+        },
+        {
+          "key": "tag",
+          "version": 1
+        }
+      ],
+      "strings": true
+    },
+    {
+      "name": "objects",
+      "namespace": "punch",
+      "compact": true,
+      "flagsPosition": -1,
+      "fields": [
+        {
+          "name": "oid",
+          "required": true,
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "type",
+          "required": true,
+          "type": "@punch/object-type",
+          "version": 1
+        },
+        {
+          "name": "size",
+          "required": true,
+          "type": "uint",
+          "version": 1
+        },
+        {
+          "name": "data",
+          "required": true,
+          "type": "buffer",
+          "version": 1
+        }
+      ]
+    }
+  ]
+}

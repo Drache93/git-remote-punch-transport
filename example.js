@@ -1,22 +1,17 @@
-const cenc = require('compact-encoding')
-const b4a = require('b4a')
-const { RepoConfig } = require('./lib/messages.js')
 const { PunchLocalDB } = require('./lib/db/index.js')
+const { decodeUrl } = require('./lib/messages.js')
 
-const configBuffer = b4a.from(
-  '0200002dd1e5bc519d005e0ca74b9e3a0719549371cb9547f6672c69aba0d5b3cfc56f0570756e636800',
-  'hex'
-)
-const config = cenc.decode(RepoConfig, configBuffer)
+const url = 'git+pear://somez32encodedkey/punch'
+const config = decodeUrl(url)
 
 const local = new PunchLocalDB()
 
 const main = async () => {
   await local.ready()
-  const remote = await local.joinRemote('punch', config.key)
+  const remote = await local.joinRemote(config.name, config.key)
 
   console.log(remote.availablePeers)
-  console.log(remote._db.core)
+  console.log(remote.core)
 }
 
 main()

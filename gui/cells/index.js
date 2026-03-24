@@ -1,8 +1,6 @@
 const { Cell, cellery: html } = require('cellery')
-const { PunchRemoteDB } = require('../../lib/db/remote2.cjs')
 
 class Repo extends Cell {
-  /** @type {PunchRemoteDB} */
   repo = null
 
   constructor(opts = {}) {
@@ -44,7 +42,6 @@ class Repo extends Cell {
 }
 
 class RepoHeader extends Cell {
-  /** @type {PunchRemoteDB} */
   repo = null
 
   constructor(opts = {}) {

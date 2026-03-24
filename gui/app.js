@@ -6,7 +6,7 @@ const { join } = require('bare-path')
 const { HTMLServer } = require('cellery-html')
 const { Text } = require('cellery')
 
-const { PunchLocalDB } = require('../lib/db/index.cjs')
+const { PunchLocalDB } = require('../lib/db')
 
 const target = require('#target')
 const { Repo, FileTree, RepoHeader } = require('./cells')

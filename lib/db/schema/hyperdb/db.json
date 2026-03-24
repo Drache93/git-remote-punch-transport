@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "offset": 0,
+  "schema": [
+    {
+      "name": "repos",
+      "namespace": "punch",
+      "id": 0,
+      "type": 1,
+      "version": 1,
+      "versionField": null,
+      "indexes": [],
+      "schema": "@punch/repos",
+      "derived": false,
+      "key": [
+        "name"
+      ],
+      "trigger": null
+    },
+    {
+      "name": "branches",
+      "namespace": "punch",
+      "id": 1,
+      "type": 1,
+      "version": 1,
+      "versionField": null,
+      "indexes": [],
+      "schema": "@punch/branches",
+      "derived": false,
+      "key": [
+        "name"
+      ],
+      "trigger": null
+    },
+    {
+      "name": "files",
+      "namespace": "punch",
+      "id": 2,
+      "type": 1,
+      "version": 1,
+      "versionField": null,
+      "indexes": [
+        "@punch/files-by-branch"
+      ],
+      "schema": "@punch/files",
+      "derived": false,
+      "key": [
+        "branch",
+        "path"
+      ],
+      "trigger": null
+    },
+    {
+      "name": "objects",
+      "namespace": "punch",
+      "id": 3,
+      "type": 1,
+      "version": 1,
+      "versionField": null,
+      "indexes": [],
+      "schema": "@punch/objects",
+      "derived": false,
+      "key": [
+        "oid"
+      ],
+      "trigger": null
+    },
+    {
+      "name": "files-by-branch",
+      "namespace": "punch",
+      "id": 4,
+      "type": 2,
+      "version": 1,
+      "collection": "@punch/files",
+      "unique": false,
+      "deprecated": false,
+      "key": [
+        "branch"
+      ]
+    }
+  ]
+}
