@@ -9,7 +9,7 @@ const { Text } = require('cellery')
 const { PunchLocalDB } = require('../lib/db')
 
 const target = require('#target')
-const { Repo, FileTree, RepoHeader, BackButton } = require('./cells')
+const { Repo, FileTree, FileContent, RepoHeader, BackButton } = require('./cells')
 const { app } = require('./views/main')
 const { Transform } = require('streamx')
 
@@ -19,14 +19,29 @@ const db = new PunchLocalDB({ store })
 
 Error.stackTraceLimit = 100
 
+function isLikelyText(buf) {
+  const len = Math.min(buf.length, 8192)
+  for (let i = 0; i < len; i++) {
+    const b = buf[i]
+    if (b === 0) return false // null byte → binary
+    if (b < 0x08 && b !== 0x00) return false // low control chars (except null already caught)
+  }
+  return true
+}
+
 // Live state — not serialized into the machine context
 let activeDrive = null
 let activeTree = null
 let activeRepo = null
+const entryIdToName = new Map()
+let pendingFileName = null
 
 function registerEntryClicks(treeCell) {
+  entryIdToName.clear()
   for (const entry of treeCell._entries) {
-    const id = (entry.isDir ? 'dir-' : 'file-') + entry.name
+    const safeId = entry.name.replace(/[^a-zA-Z0-9_-]/g, '_')
+    const id = (entry.isDir ? 'dir-' : 'entry-') + safeId
+    entryIdToName.set(id, entry.name)
     treeCell.cellery.pub({ event: 'register', id, targets: ['click'] })
   }
 }
@@ -113,6 +128,36 @@ const machine = new Coremachine(
               back.cellery.pub({ event: 'register', id: 'back', targets: ['click'] })
             }
           },
+          OPEN_FILE: {
+            action: async () => {
+              if (!activeDrive || !pendingFileName) return
+
+              const prefix = activeTree.currentPath === '/' ? '/' : activeTree.currentPath + '/'
+              const filePath = prefix + pendingFileName
+              pendingFileName = null
+
+              let content = null
+              let isText = false
+
+              try {
+                const buf = await activeDrive.get(filePath)
+                if (buf) {
+                  isText = isLikelyText(buf)
+                  if (isText) content = buf.toString('utf-8')
+                }
+              } catch (err) {
+                content = 'Error reading file: ' + err.message
+                isText = true
+              }
+
+              const cell = new FileContent({ fileName: filePath, content, isText })
+              cell.render({ id: 'file-tree', insert: 'beforeend', clear: true })
+
+              const back = new BackButton({ path: filePath })
+              back.render({ id: 'file-tree', insert: 'afterbegin' })
+              back.cellery.pub({ event: 'register', id: 'back', targets: ['click'] })
+            }
+          },
           BACK: {
             action: async () => {
               if (!activeTree) return
@@ -150,10 +195,14 @@ const server = new HTMLServer({
         if (event === 'click' && data.id === 'back') {
           this.push({ action: 'BACK' })
         } else if (event === 'click' && data.id.startsWith('dir-')) {
-          const dirName = data.id.slice(4)
-          this.push({ action: 'OPEN_DIR', value: dirName })
-        } else if (event === 'click' && data.id.startsWith('file-')) {
-          console.log('FILE CLICK', data.id.slice(5))
+          const name = entryIdToName.get(data.id)
+          if (name) this.push({ action: 'OPEN_DIR', value: name })
+        } else if (event === 'click' && data.id.startsWith('entry-')) {
+          const name = entryIdToName.get(data.id)
+          if (name) {
+            pendingFileName = name
+            this.push({ action: 'OPEN_FILE' })
+          }
         } else if (event === 'click' && data.id.startsWith('repo-')) {
           this.push({ action: 'OPEN_REPO', value: data.id.slice(5) })
         } else if (event === 'click') {

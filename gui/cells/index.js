@@ -1,4 +1,4 @@
-const { Cell, cellery: html } = require('cellery')
+const { Cell, Text, cellery: html } = require('cellery')
 
 class Repo extends Cell {
   repo = null
@@ -87,8 +87,10 @@ class DirEntry extends Cell {
   _render() {
     const prefix = this.isDir ? '/' : ''
 
+    const safeId = this.name.replace(/[^a-zA-Z0-9_-]/g, '_')
+
     return html`
-      <div id="${(this.isDir ? 'dir-' : 'file-') + this.name}">
+      <div id="${(this.isDir ? 'dir-' : 'entry-') + safeId}">
         <style>
           div {
             padding: 0.2rem 0.35rem;
@@ -138,6 +140,43 @@ class BackButton extends Cell {
 
         <div>
           <span>.. ${this.path}</span>
+        </div>
+      </div>
+    `
+  }
+}
+
+class FileContent extends Cell {
+  constructor(opts = {}) {
+    super(opts)
+    this.fileName = opts.fileName || ''
+    this.content = opts.content || null
+    this.isText = opts.isText !== undefined ? opts.isText : true
+  }
+
+  _render() {
+    const body = this.isText
+      ? new Text({ value: this.content.trim(), pre: true })
+      : new Text({ value: 'Binary file \n cannot display as text.', pre: true })
+
+    return html`
+      <div id="file-content">
+        <style>
+          .file-viewer {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            padding: 0.5rem;
+          }
+
+          .file-body {
+            color: #c8c8c8;
+            font-family: monospace;
+            font-size: 0.8rem;
+          }
+        </style>
+
+        <div class="file-viewer">
+          <div class="${this.isText ? 'file-body' : 'file-body'}">${body}</div>
         </div>
       </div>
     `
@@ -205,4 +244,4 @@ class FileTree extends Cell {
   }
 }
 
-module.exports = { Repo, RepoHeader, FileTree, DirEntry, BackButton }
+module.exports = { Repo, RepoHeader, FileTree, FileContent, DirEntry, BackButton }

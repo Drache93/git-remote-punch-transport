@@ -1,8 +1,8 @@
 const { PunchLocalDB } = require('./lib/db/index.js')
-const { decodeUrl } = require('./lib/messages.js')
+const GitPearLink = require('./lib/link.js')
 
 const url = 'git+pear://somez32encodedkey/punch'
-const config = decodeUrl(url)
+const config = GitPearLink.parse(url)
 
 const local = new PunchLocalDB()
 

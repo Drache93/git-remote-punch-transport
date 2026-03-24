@@ -6,7 +6,7 @@ const Corestore = require('corestore')
 
 const { PunchLocalDB } = require('../lib/db')
 const { parseCommit, walkTree } = require('../lib/db/remote2')
-const { encodeUrl, decodeUrl } = require('../lib/messages')
+const GitPearLink = require('../lib/link')
 
 // --- Helpers ---
 
@@ -107,18 +107,6 @@ test('parseCommit handles no parent', (t) => {
   t.is(commit.tree, 'abc123')
   t.alike(commit.parents, [])
   t.is(commit.message, 'initial')
-})
-
-test('encodeUrl and decodeUrl roundtrip', (t) => {
-  const key = Buffer.alloc(32, 0xab)
-  const name = 'my-repo'
-
-  const url = encodeUrl(key, name)
-  t.ok(url.startsWith('git+pear://'))
-
-  const decoded = decodeUrl(url)
-  t.alike(decoded.key, key)
-  t.is(decoded.name, name)
 })
 
 test('createRemote and getRepo', async (t) => {

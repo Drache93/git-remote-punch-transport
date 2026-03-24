@@ -1,6 +1,6 @@
 const readline = require('readline')
 const { PunchGit } = require('./lib/punch.js')
-const { decodeUrl } = require('./lib/messages.js')
+const GitPearLink = require('./lib/link.js')
 const goodbye = require('graceful-goodbye')
 const process = require('process')
 
@@ -30,7 +30,8 @@ try {
     }
   }
 
-  config = decodeUrl(url)
+  const link = GitPearLink.parse(url)
+  config = { key: link.drive.key, name: link.pathname, length: link.drive.length }
 } catch (error) {
   throw new Error(`Invalid remote url: ${url}: ${error.message}`)
 }
