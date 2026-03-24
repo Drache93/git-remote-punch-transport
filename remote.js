@@ -57,69 +57,73 @@ const main = async () => {
   await punch.ready()
   punch._progressReporter.punched(punch.remote)
 
-  for await (const line of readline.createInterface({
-    input: process.stdin,
-    crlfDelay
-  })) {
-    const command = line.split(' ')[0]
-    punch._verbose('Line: ' + line)
+  try {
+    for await (const line of readline.createInterface({
+      input: process.stdin,
+      crlfDelay
+    })) {
+      const command = line.split(' ')[0]
+      punch._verbose('Line: ' + line)
 
-    switch (command) {
-      case 'capabilities':
-        capabilities()
-        break
-      case 'option':
-        {
-          const option = line.split(' ')[1]
-          switch (option) {
-            case 'verbosity':
-              punch.setVerbosity(line.split(' ')[2])
-              break
-            case 'progress':
-              punch.setProgress(line.split(' ')[2] === 'true')
-              break
-            case 'cloning':
-              punch.setCloning(line.split(' ')[2] === 'true')
-              break
-            case 'followtags':
-              punch.setFollowTags(line.split(' ')[2] === 'true')
-              break
+      switch (command) {
+        case 'capabilities':
+          capabilities()
+          break
+        case 'option':
+          {
+            const option = line.split(' ')[1]
+            switch (option) {
+              case 'verbosity':
+                punch.setVerbosity(line.split(' ')[2])
+                break
+              case 'progress':
+                punch.setProgress(line.split(' ')[2] === 'true')
+                break
+              case 'cloning':
+                punch.setCloning(line.split(' ')[2] === 'true')
+                break
+              case 'followtags':
+                punch.setFollowTags(line.split(' ')[2] === 'true')
+                break
+            }
+            process.stdout.write('ok\n')
           }
-          process.stdout.write('ok\n')
+          break
+        case 'list': {
+          if (line === 'list') {
+            await punch.listAndStoreRefs()
+          } else {
+            await punch.listForPush()
+          }
+          break
         }
-        break
-      case 'list': {
-        if (line === 'list') {
-          await punch.listAndStoreRefs()
-        } else {
-          await punch.listForPush()
+        case 'push': {
+          const ref = line.split(' ')[1]
+          await punch.addPushRefs(ref)
+          break
         }
-        break
-      }
-      case 'push': {
-        const ref = line.split(' ')[1]
-        punch.addPushRefs(ref)
-        break
-      }
-      case 'fetch': {
-        punch.prepareFetch(line.replace('fetch ', ''))
-        break
-      }
-      case '': {
-        if (punch.hasPendingFetch()) {
-          await punch.fetch()
-        } else {
-          await punch.push()
+        case 'fetch': {
+          punch.prepareFetch(line.replace('fetch ', ''))
+          break
         }
-        break
+        case '': {
+          if (punch.hasPendingFetch()) {
+            await punch.fetch()
+          } else {
+            punch._debug('pushing')
+            await punch.push()
+          }
+          return
+        }
+        default:
+          console.error('Unexpected message:', line)
       }
-      default:
-        console.error('Unexpected message:', line)
     }
+  } finally {
+    punch._debug('Closing punch')
+    await punch.close()
+    process.exit(0)
   }
-
-  punch._debug('Closing punch')
-  await punch.close()
 }
 
 main()
