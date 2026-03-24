@@ -10,7 +10,7 @@ const { encodeUrl, decodeUrl } = require('../lib/messages')
 
 // --- Helpers ---
 
-async function createStore (t) {
+async function createStore(t) {
   const dir = await tmp(t)
   const store = new Corestore(dir)
   t.teardown(() => store.close())
@@ -18,13 +18,13 @@ async function createStore (t) {
 }
 
 // 40-char hex OIDs (proper SHA1 length)
-const OID_BLOB1 = 'aa'.repeat(20)    // blob: hello world
-const OID_BLOB2 = 'bb'.repeat(20)    // blob: console.log("hi")
+const OID_BLOB1 = 'aa'.repeat(20) // blob: hello world
+const OID_BLOB2 = 'bb'.repeat(20) // blob: console.log("hi")
 const OID_TREE_SRC = 'cc'.repeat(20) // tree: src/
 const OID_TREE_ROOT = 'dd'.repeat(20) // tree: root
-const OID_COMMIT = 'ee'.repeat(20)   // commit
+const OID_COMMIT = 'ee'.repeat(20) // commit
 
-function makeTestObjects () {
+function makeTestObjects() {
   const blobData = Buffer.from('hello world')
   const objects = new Map()
   objects.set(OID_BLOB1, { type: 'blob', size: blobData.length, data: blobData })
@@ -56,7 +56,7 @@ function makeTestObjects () {
   return objects
 }
 
-function makeTreeData (entries) {
+function makeTreeData(entries) {
   // Git tree format: <mode> <name>\0<20-byte-binary-oid> repeated
   const bufs = []
   for (const { mode, name, oid } of entries) {
@@ -69,16 +69,18 @@ function makeTreeData (entries) {
 // --- Tests ---
 
 test('parseCommit extracts metadata', (t) => {
-  const data = Buffer.from([
-    'tree abc123',
-    'parent def456',
-    'author Alice <alice@example.com> 1700000000 +0000',
-    'committer Bob <bob@example.com> 1700000001 +0000',
-    '',
-    'Fix the thing',
-    '',
-    'More details here.'
-  ].join('\n'))
+  const data = Buffer.from(
+    [
+      'tree abc123',
+      'parent def456',
+      'author Alice <alice@example.com> 1700000000 +0000',
+      'committer Bob <bob@example.com> 1700000001 +0000',
+      '',
+      'Fix the thing',
+      '',
+      'More details here.'
+    ].join('\n')
+  )
 
   const commit = parseCommit(data)
 
@@ -90,13 +92,15 @@ test('parseCommit extracts metadata', (t) => {
 })
 
 test('parseCommit handles no parent', (t) => {
-  const data = Buffer.from([
-    'tree abc123',
-    'author Alice <alice@example.com> 1700000000 +0000',
-    'committer Alice <alice@example.com> 1700000000 +0000',
-    '',
-    'initial'
-  ].join('\n'))
+  const data = Buffer.from(
+    [
+      'tree abc123',
+      'author Alice <alice@example.com> 1700000000 +0000',
+      'committer Alice <alice@example.com> 1700000000 +0000',
+      '',
+      'initial'
+    ].join('\n')
+  )
 
   const commit = parseCommit(data)
 

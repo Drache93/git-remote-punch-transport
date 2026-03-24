@@ -5,19 +5,20 @@ const { Repo, RepoHeader, FileTree, DirEntry, BackButton } = require('../../gui/
 
 // --- Helpers ---
 
-function mockRepo (name) {
+function mockRepo(name) {
   return { name, core: { length: 42 } }
 }
 
-function mockDrive (files) {
+function mockDrive(files) {
   return {
-    readdir (folder) {
+    readdir(folder) {
       const prefix = !folder || folder === '/' ? '/' : folder + '/'
       const seen = new Set()
       const entries = []
 
       for (const f of files) {
-        const rest = prefix === '/' ? f.slice(1) : f.startsWith(prefix) ? f.slice(prefix.length) : null
+        const rest =
+          prefix === '/' ? f.slice(1) : f.startsWith(prefix) ? f.slice(prefix.length) : null
         if (rest === null) continue
         const name = rest.split('/')[0]
         if (!seen.has(name)) {
@@ -28,7 +29,7 @@ function mockDrive (files) {
 
       return Readable.from(entries)
     },
-    list (folder) {
+    list(folder) {
       const prefix = !folder || folder === '/' ? '/' : folder
       const matched = files.filter((f) => prefix === '/' || f.startsWith(prefix))
       return Readable.from(matched)

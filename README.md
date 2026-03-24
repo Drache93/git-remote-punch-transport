@@ -41,6 +41,7 @@ The transport provides git-like progress output during push and fetch operations
 - **Receiving objects**: Similar progress for fetch/clone operations
 
 Example push output:
+
 ```
 Punching... Punched! Found 2 peers
 ⠙ Enumerating objects: 42
@@ -54,6 +55,7 @@ Progress output is enabled by default and uses `yocto-spinner` for smooth visual
 ## Development
 
 Quick setup for testing, link the file to a folder on your path so you can use with git:
+
 ```bash
 sudo ln -s $(pwd)/index.js /usr/local/bin/git-remote-punch
 ```
@@ -61,6 +63,7 @@ sudo ln -s $(pwd)/index.js /usr/local/bin/git-remote-punch
 Git will automatically look for `git-remote-<protocol>` when accessing a remote.
 
 ## ToDo
+
 - [ ] Ensure natural object ordering is replicated in core
 - [ ] Mult-writer
 - [ ] Access management

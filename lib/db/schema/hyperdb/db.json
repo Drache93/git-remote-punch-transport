@@ -12,9 +12,7 @@
       "indexes": [],
       "schema": "@punch/repos",
       "derived": false,
-      "key": [
-        "name"
-      ],
+      "key": ["name"],
       "trigger": null
     },
     {
@@ -27,9 +25,7 @@
       "indexes": [],
       "schema": "@punch/branches",
       "derived": false,
-      "key": [
-        "name"
-      ],
+      "key": ["name"],
       "trigger": null
     },
     {
@@ -39,15 +35,10 @@
       "type": 1,
       "version": 1,
       "versionField": null,
-      "indexes": [
-        "@punch/files-by-branch"
-      ],
+      "indexes": ["@punch/files-by-branch"],
       "schema": "@punch/files",
       "derived": false,
-      "key": [
-        "branch",
-        "path"
-      ],
+      "key": ["branch", "path"],
       "trigger": null
     },
     {
@@ -60,9 +51,7 @@
       "indexes": [],
       "schema": "@punch/objects",
       "derived": false,
-      "key": [
-        "oid"
-      ],
+      "key": ["oid"],
       "trigger": null
     },
     {
@@ -74,9 +63,7 @@
       "collection": "@punch/files",
       "unique": false,
       "deprecated": false,
-      "key": [
-        "branch"
-      ]
+      "key": ["branch"]
     }
   ]
 }

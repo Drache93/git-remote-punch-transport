@@ -10,7 +10,7 @@ class Repo extends Cell {
 
   _render() {
     const res = html`
-      <div id="${this.repo.name}">
+      <div id="repo-${this.repo.name}">
         <style>
           div {
             flex: 1 1 auto;
@@ -51,7 +51,7 @@ class RepoHeader extends Cell {
 
   _render() {
     const res = html`
-      <div id="${this.repo.name}">
+      <div id="repo-${this.repo.name}">
         <style>
           div {
             flex: 1 1 auto;
@@ -154,24 +154,24 @@ class FileTree extends Cell {
 
   async load() {
     this._entries = []
-    const seen = new Set()
+    const dirs = new Set()
+    const files = new Set()
+    const prefix = this.currentPath === '/' ? '' : this.currentPath
 
-    const prefix = this.currentPath === '/' ? '/' : this.currentPath + '/'
+    for await (const path of this.drive.list(this.currentPath)) {
+      const rest = path.slice(prefix.length + 1)
+      const name = rest.split('/')[0]
 
-    for await (const name of this.drive.readdir(this.currentPath)) {
-      if (seen.has(name)) continue
-      seen.add(name)
-
-      const fullPath = prefix + name
-      const sub = this.drive.readdir(fullPath)
-      let isDir = false
-
-      for await (const _ of sub) { // eslint-disable-line no-unused-vars
-        isDir = true
-        break
+      if (rest.includes('/')) {
+        dirs.add(name)
+      } else {
+        files.add(name)
       }
+    }
 
-      this._entries.push({ name, isDir })
+    for (const name of dirs) this._entries.push({ name, isDir: true })
+    for (const name of files) {
+      if (!dirs.has(name)) this._entries.push({ name, isDir: false })
     }
 
     this._entries.sort((a, b) => {

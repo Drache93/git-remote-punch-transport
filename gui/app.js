@@ -55,7 +55,7 @@ const machine = new Coremachine(
 
                 const cell = new Repo({ repo: r })
                 cell.render({ id: 'main', insert: 'beforeend', clear })
-                cell.cellery.pub({ event: 'register', id: r.name, targets: ['click'] })
+                cell.cellery.pub({ event: 'register', id: 'repo-' + r.name, targets: ['click'] })
               }
 
               if (!found) {
@@ -152,9 +152,12 @@ const server = new HTMLServer({
         } else if (event === 'click' && data.id.startsWith('dir-')) {
           const dirName = data.id.slice(4)
           this.push({ action: 'OPEN_DIR', value: dirName })
+        } else if (event === 'click' && data.id.startsWith('file-')) {
+          console.log('FILE CLICK', data.id.slice(5))
+        } else if (event === 'click' && data.id.startsWith('repo-')) {
+          this.push({ action: 'OPEN_REPO', value: data.id.slice(5) })
         } else if (event === 'click') {
           console.log('CLICK', data)
-          this.push({ action: 'OPEN_REPO', value: data.id })
         }
 
         cb()

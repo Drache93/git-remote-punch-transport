@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "brittle-bare test/all.js",
-    "fix": "prettier --write",
+    "format": "prettier . --write",
+    "lint": "lunte && prettier . --check",
     "schema": "node schemas/index.js",
     "dev": "npm run clean && npm run build && ./out/darwin-arm64/git-pear.app/Contents/MacOS/git-pear",
     "build": "bare-build --out out/darwin-arm64 --host darwin-arm64 --name git-pear --runtime bare-native/runtime gui/app.js",
@@ -22,6 +23,8 @@
     "bare-build": "^0.4.5",
     "brittle": "^3.18.0",
     "hyperdht": "^6.21.0",
+    "localdrive": "^2.2.1",
+    "prettier-config-holepunch": "^2.0.0",
     "test-tmp": "^1.4.0"
   },
   "imports": {
@@ -98,6 +101,7 @@
     "hyperschema": "^1.20.1",
     "hyperswarm": "^4.14.0",
     "keet-identity-key": "^3.1.0",
+    "mirror-drive": "^1.13.0",
     "paparam": "^1.8.6",
     "protomux-wakeup": "^2.6.1",
     "ready-resource": "^1.1.2",
