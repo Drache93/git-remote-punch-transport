@@ -225,21 +225,29 @@ class FileTree extends Cell {
   }
 
   _render() {
-    return html`
-      <div id="${this.id}">
+    return html`<>
         <style>
+        .tree-container {
+          display: flex;
+          flex-flow: column nowrap;
+          overflow-y: auto;
+        }
+
           .tree-root {
-            overflow-y: auto;
             height: 100%;
-            flex: 1 1 auto;
             padding: 0.25rem;
           }
+
         </style>
+
+      <div id="${this.id}" class="tree-container">
+
 
         <div class="tree-root">
           ${this._entries.map((e) => new DirEntry({ name: e.name, isDir: e.isDir }))}
         </div>
       </div>
+      </>
     `
   }
 }

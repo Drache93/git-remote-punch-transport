@@ -3,10 +3,9 @@ const { cellery: html } = require('cellery')
 const app = html`<>
   <style>
     #main {
-        flex: 1 1 auto;
-        display: flex;
-        flex-flow: row;
-        padding: 1em;
+      display: flex;
+      height: 100%;
+      flex-flow: column nowrap;
     }
   </style>
   <div id="main">
