@@ -28,7 +28,7 @@
     "gp": "bin-tui.js"
   },
   "scripts": {
-    "test": "brittle test/*.js && brittle-bare gui/all.js",
+    "test": "brittle-bare test/all.js",
     "fix": "prettier --write",
     "schema": "node schemas/local.js && node schemas/remote.js",
     "postinstall": "patch-package",
