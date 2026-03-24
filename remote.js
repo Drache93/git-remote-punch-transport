@@ -1,33 +1,25 @@
-/** @typedef {import('pear-interface')} */
-
-/* global Pear */
-
 const readline = require('readline')
 const { PunchGit } = require('./lib/punch.js')
 const { decodeUrl } = require('./lib/messages.js')
+const goodbye = require('graceful-goodbye')
 const process = require('process')
-const pipe = require('pear-pipe')()
 
-// TODO: use this
 const argv = process.argv.slice(0)
 // args[0] == node
 // args[1] == git-remote-punch location
-// args[2] == --trusted
-// args[3] == (link)
-let remote = argv[4]
-let url = argv[5]
+// args[2] == remote name
+// args[3] == url
+let remote = argv[2]
+let url = argv[3]
 
 if (!url) {
   console.error('Remote url required')
   process.exit(1)
 }
 
-// Get the config from the url
 let config = {}
 try {
   if (!url.includes('git+pear://')) {
-    // Search for it in the args
-    process.stderr.write('Searching for config...\n') // ? remove?
     const urlIdx = argv.findIndex((arg) => arg.startsWith('git+pear://'))
     url = argv[urlIdx]
     remote = argv[urlIdx - 1]
@@ -47,9 +39,7 @@ const capabilities = () => {
   process.stdout.write('option\nfetch\npush\nlist\n\n')
 }
 
-// Git communicates with the remote helper using new line based protocol, check https://git-scm.com/docs/gitremote-helpers
-
-const main = async (args) => {
+const main = async () => {
   const crlfDelay = 30000
 
   const punch = new PunchGit({
@@ -57,14 +47,12 @@ const main = async (args) => {
     ...config
   })
 
-  Pear.teardown(async () => {
+  goodbye(async () => {
     await punch.close()
   })
 
-  // Enable progress by default for better UX
   punch.setProgress(true)
 
-  // TODO: Let erorrs explode for now
   punch._progressReporter.punching()
   await punch.ready()
   punch._progressReporter.punched(punch.remote)
@@ -94,7 +82,6 @@ const main = async (args) => {
               punch.setCloning(line.split(' ')[2] === 'true')
               break
             case 'followtags':
-              // TODO: Handle this
               punch.setFollowTags(line.split(' ')[2] === 'true')
               break
           }
@@ -102,24 +89,20 @@ const main = async (args) => {
         }
         break
       case 'list': {
-        // list
         if (line === 'list') {
           await punch.listAndStoreRefs()
         } else {
-          // list for-push
           await punch.listForPush()
         }
         break
       }
       case 'push': {
         const ref = line.split(' ')[1]
-
         punch.addPushRefs(ref)
         break
       }
       case 'fetch': {
         punch.prepareFetch(line.replace('fetch ', ''))
-
         break
       }
       case '': {
@@ -128,12 +111,10 @@ const main = async (args) => {
         } else {
           await punch.push()
         }
-        pipe.end()
         break
       }
       default:
         console.error('Unexpected message:', line)
-        pipe.end()
     }
   }
 
@@ -141,4 +122,4 @@ const main = async (args) => {
   await punch.close()
 }
 
-main(argv)
+main()

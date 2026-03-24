@@ -1,11 +1,7 @@
-/** @typedef {import('pear-interface')} */
-/* global Pear */
-
 const { header, summary, command, validate, arg } = require('paparam')
 const { PunchLocalDB } = require('./lib/db')
-const process = require('process')
-
 const goodbye = require('graceful-goodbye')
+const process = require('process')
 
 const green = (text) => `\x1b[32m${text}\x1b[0m`
 
@@ -86,4 +82,4 @@ const cmd = command(
   () => console.log(cmd.help())
 )
 
-cmd.parse(process.argv.slice(3))
+cmd.parse(process.argv.slice(2))

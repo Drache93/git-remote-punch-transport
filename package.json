@@ -2,39 +2,16 @@
   "name": "git-remote-punch",
   "version": "0.3.0",
   "description": "Git over holepunch remote helper.",
-  "pear": {
-    "name": "git-remote-punch",
-    "pre": "pear-electron/pre",
-    "gui": {
-      "width": "1024",
-      "height": "768"
-    },
-    "routes": {
-      "remote": "remote.js",
-      "tui": "tui.js"
-    },
-    "stage": {
-      "ignore": [
-        ".git",
-        ".vscode",
-        "example",
-        "example.js",
-        "test"
-      ]
-    }
-  },
   "bin": {
     "git-remote-git+pear": "bin.js",
-    "gp": "bin-tui.js"
+    "git-punch": "bin-tui.js"
   },
   "scripts": {
     "test": "brittle-bare test/all.js",
     "fix": "prettier --write",
-    "schema": "node schemas/local.js && node schemas/remote.js",
-    "postinstall": "patch-package",
+    "schema": "node schemas/index.js",
     "dev": "npm run clean && npm run build && ./out/darwin-arm64/git-pear.app/Contents/MacOS/git-pear",
     "build": "bare-build --out out/darwin-arm64 --host darwin-arm64 --name git-pear --runtime bare-native/runtime gui/app.js",
-    "build:adapters:css": "tailwindcss -i ./gui/adapters/html/input.css -o ./gui/adapters/html/output.css",
     "build:android": "bare-build --out out/android-arm64 --host android-arm64 --identifier io.pear.git --name GitPear --runtime bare-native/runtime gui/app.js",
     "clean": "rm -rf out"
   },
@@ -42,13 +19,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@tailwindcss/cli": "^4.2.1",
     "bare-build": "^0.4.5",
     "brittle": "^3.18.0",
     "hyperdht": "^6.21.0",
-    "prettier-config-holepunch": "^2.0.0",
-    "standard": "^17.1.2",
-    "tailwindcss": "^4.2.1",
     "test-tmp": "^1.4.0"
   },
   "imports": {
@@ -126,11 +99,6 @@
     "hyperswarm": "^4.14.0",
     "keet-identity-key": "^3.1.0",
     "paparam": "^1.8.6",
-    "pear-bridge": "^1.2.4",
-    "pear-electron": "^1.7.25",
-    "pear-link": "^4.2.1",
-    "pear-pipe": "^1.0.1",
-    "pear-run": "^1.0.0",
     "protomux-wakeup": "^2.6.1",
     "ready-resource": "^1.1.2",
     "rebuild-git": "^1.0.0",
