@@ -8,6 +8,7 @@ async function runTests () {
   test.pause()
 
   await import('./local.js')
+  await import('./gui/app.js')
 
   test.resume()
 }

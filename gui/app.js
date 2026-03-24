@@ -9,7 +9,7 @@ const { Text } = require('cellery')
 const { PunchLocalDB } = require('../lib/db')
 
 const target = require('#target')
-const { Repo, FileTree, RepoHeader } = require('./cells')
+const { Repo, FileTree, RepoHeader, BackButton } = require('./cells')
 const { app } = require('./views/main')
 const { Transform } = require('streamx')
 
@@ -19,6 +19,18 @@ const db = new PunchLocalDB({ store })
 
 Error.stackTraceLimit = 100
 
+// Live state — not serialized into the machine context
+let activeDrive = null
+let activeTree = null
+let activeRepo = null
+
+function registerEntryClicks(treeCell) {
+  for (const entry of treeCell._entries) {
+    const id = (entry.isDir ? 'dir-' : 'file-') + entry.name
+    treeCell.cellery.pub({ event: 'register', id, targets: ['click'] })
+  }
+}
+
 const ns = store.namespace('gui')
 const machine = new Coremachine(
   ns.get({ name: 'git-remote', valueEncoding: 'json' }),
@@ -26,7 +38,6 @@ const machine = new Coremachine(
     initial: 'home',
     context: {},
     states: {
-      // this way we render on startup and nav
       home: {
         on: {
           enter: {
@@ -65,8 +76,11 @@ const machine = new Coremachine(
         on: {
           enter: {
             action: async (ctx) => {
+              if (activeTree && activeRepo === ctx.openRepo) return
+
               console.log('openRepo!', ctx)
               if (!db.opened) await db.ready()
+              activeRepo = ctx.openRepo
 
               for await (const repo of db.getRemotes({ name: ctx.openRepo }, { limit: 1 })) {
                 const cell = new RepoHeader({ repo })
@@ -75,9 +89,46 @@ const machine = new Coremachine(
                 const drive = await repo.toDrive('main')
                 if (!drive) return
 
-                const treeCell = new FileTree({ id: 'file-tree', drive })
-                await treeCell.load()
-                treeCell.render({ id: 'main', insert: 'beforeend' })
+                activeDrive = drive
+                activeTree = new FileTree({ id: 'file-tree', drive })
+                await activeTree.load()
+                activeTree.render({ id: 'main', insert: 'beforeend' })
+                registerEntryClicks(activeTree)
+              }
+            }
+          },
+          OPEN_DIR: {
+            action: async (ctx, dirName) => {
+              if (!activeTree) return
+
+              const prefix = activeTree.currentPath === '/' ? '/' : activeTree.currentPath + '/'
+              const folder = prefix + dirName
+
+              await activeTree.navigate(folder)
+              activeTree.render()
+              registerEntryClicks(activeTree)
+
+              const back = new BackButton({ path: activeTree.currentPath })
+              back.render({ id: 'file-tree', insert: 'afterbegin' })
+              back.cellery.pub({ event: 'register', id: 'back', targets: ['click'] })
+            }
+          },
+          BACK: {
+            action: async () => {
+              if (!activeTree) return
+
+              const parts = activeTree.currentPath.split('/')
+              parts.pop()
+              const parent = parts.join('/') || '/'
+
+              await activeTree.navigate(parent)
+              activeTree.render()
+              registerEntryClicks(activeTree)
+
+              if (parent !== '/') {
+                const back = new BackButton({ path: parent })
+                back.render({ id: 'file-tree', insert: 'afterbegin' })
+                back.cellery.pub({ event: 'register', id: 'back', targets: ['click'] })
               }
             }
           }
@@ -93,12 +144,14 @@ const server = new HTMLServer({
   streams: [
     new Transform({
       transform(msg, cb) {
+        console.log('event', msg)
         const { event, data } = JSON.parse(msg.toString('utf-8'))
 
-        // @todo need a way to handle these at the cell
-
-        if (event === 'click' && data.id.startsWith('dir-')) {
-          console.log('CLICK', data)
+        if (event === 'click' && data.id === 'back') {
+          this.push({ action: 'BACK' })
+        } else if (event === 'click' && data.id.startsWith('dir-')) {
+          const dirName = data.id.slice(4)
+          this.push({ action: 'OPEN_DIR', value: dirName })
         } else if (event === 'click') {
           console.log('CLICK', data)
           this.push({ action: 'OPEN_REPO', value: data.id })

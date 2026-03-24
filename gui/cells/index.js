@@ -77,73 +77,115 @@ class RepoHeader extends Cell {
   }
 }
 
+class DirEntry extends Cell {
+  constructor(opts = {}) {
+    super(opts)
+    this.name = opts.name
+    this.isDir = opts.isDir
+  }
+
+  _render() {
+    const prefix = this.isDir ? '/' : ''
+
+    return html`
+      <div id="${(this.isDir ? 'dir-' : 'file-') + this.name}">
+        <style>
+          div {
+            padding: 0.2rem 0.35rem;
+            color: #00c950;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+          }
+
+          div:hover {
+            color: #ffffff;
+            background: #0a1f0a;
+          }
+        </style>
+
+        <div>
+          <span>${prefix}${this.name}</span>
+        </div>
+      </div>
+    `
+  }
+}
+
+class BackButton extends Cell {
+  constructor(opts = {}) {
+    super(opts)
+    this.path = opts.path || '/'
+  }
+
+  _render() {
+    return html`
+      <div id="back">
+        <style>
+          div {
+            padding: 0.3rem 0.5rem;
+            color: #00d3f2;
+            cursor: pointer;
+            border-bottom: 1px solid #1a5a2a;
+            margin-bottom: 0.25rem;
+          }
+
+          div:hover {
+            color: #ffffff;
+          }
+        </style>
+
+        <div>
+          <span>.. ${this.path}</span>
+        </div>
+      </div>
+    `
+  }
+}
+
 class FileTree extends Cell {
   constructor(opts = {}) {
     super(opts)
     this.drive = opts.drive
-    this._paths = []
+    this.currentPath = opts.currentPath || '/'
+    this._entries = []
   }
 
   async load() {
-    for await (const key of this.drive.list('/')) {
-      this._paths.push(key)
-    }
-  }
+    this._entries = []
+    const seen = new Set()
 
-  _buildTree() {
-    const root = {}
+    const prefix = this.currentPath === '/' ? '/' : this.currentPath + '/'
 
-    for (const key of this._paths) {
-      const parts = key.slice(1).split('/')
-      let node = root
+    for await (const name of this.drive.readdir(this.currentPath)) {
+      if (seen.has(name)) continue
+      seen.add(name)
 
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!node[parts[i]]) node[parts[i]] = {}
-        node = node[parts[i]]
+      const fullPath = prefix + name
+      const sub = this.drive.readdir(fullPath)
+      let isDir = false
+
+      for await (const _ of sub) { // eslint-disable-line no-unused-vars
+        isDir = true
+        break
       }
 
-      node[parts[parts.length - 1]] = null
+      this._entries.push({ name, isDir })
     }
 
-    return root
-  }
-
-  _renderNode(node) {
-    const dirs = []
-    const files = []
-
-    for (const name of Object.keys(node)) {
-      if (node[name] !== null) {
-        dirs.push(name)
-      } else {
-        files.push(name)
-      }
-    }
-
-    dirs.sort()
-    files.sort()
-
-    return [...dirs, ...files].map((name) => {
-      if (node[name] !== null) {
-        return html`
-          <details class="tree-dir">
-            <summary class="tree-row">${name}</summary>
-            <div class="tree-children">${this._renderNode(node[name])}</div>
-          </details>
-        `
-      }
-
-      return html`
-        <div class="tree-blob">
-          <span class="tree-name">${name}</span>
-        </div>
-      `
+    this._entries.sort((a, b) => {
+      if (a.isDir !== b.isDir) return a.isDir ? -1 : 1
+      return a.name.localeCompare(b.name)
     })
   }
 
-  _render() {
-    const tree = this._buildTree()
+  async navigate(folder) {
+    this.currentPath = folder
+    await this.load()
+  }
 
+  _render() {
     return html`
       <div id="${this.id}">
         <style>
@@ -153,71 +195,14 @@ class FileTree extends Cell {
             flex: 1 1 auto;
             padding: 0.25rem;
           }
-
-          details.tree-dir {
-            border: 1px solid #1a5a2a;
-            border-radius: 2px;
-            margin-bottom: 0.25rem;
-          }
-
-          details.tree-dir[open] {
-            border-color: #00c950;
-          }
-
-          details.tree-dir[open] > summary {
-            border-bottom: 1px solid #1a5a2a;
-            margin-bottom: 0.25rem;
-            color: #00d3f2;
-          }
-
-          summary.tree-row {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.2rem 0.35rem;
-            color: #00c950;
-            cursor: pointer;
-            user-select: none;
-            list-style: none;
-          }
-
-          summary.tree-row::before {
-            content: '▸';
-            color: #1a8a3a;
-            width: 0.75rem;
-            flex-shrink: 0;
-          }
-
-          details[open] > summary.tree-row::before {
-            content: '▾';
-            color: #00c950;
-          }
-
-          summary.tree-row:hover {
-            color: #ffffff;
-            background: #0a1f0a;
-          }
-
-          .tree-children {
-            padding-left: 0.75rem;
-            border-left: 1px solid #1a5a2a;
-          }
-
-          .tree-blob {
-            padding: 0.15rem 0.35rem;
-            color: #00c950;
-          }
-
-          .tree-blob:hover {
-            color: #ffffff;
-            cursor: pointer;
-          }
         </style>
 
-        <div class="tree-root">${this._renderNode(tree)}</div>
+        <div class="tree-root">
+          ${this._entries.map((e) => new DirEntry({ name: e.name, isDir: e.isDir }))}
+        </div>
       </div>
     `
   }
 }
 
-module.exports = { Repo, RepoHeader, FileTree }
+module.exports = { Repo, RepoHeader, FileTree, DirEntry, BackButton }
