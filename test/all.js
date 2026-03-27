@@ -7,7 +7,6 @@ async function runTests () {
 
   test.pause()
 
-  await import('./link.js')
   await import('./local.js')
 
   test.resume()

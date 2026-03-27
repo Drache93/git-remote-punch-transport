@@ -1,12 +1,11 @@
 const readline = require('readline')
-const { PunchGit } = require('./lib/punch.js')
-const GitPearLink = require('./lib/link.js')
 const goodbye = require('graceful-goodbye')
 const process = require('process')
+const { Gip } = require('./lib/gip.js')
 
 const argv = process.argv.slice(0)
 // args[0] == node
-// args[1] == git-remote-punch location
+// args[1] == git-remote-gip location
 // args[2] == remote name
 // args[3] == url
 let remote = argv[2]
@@ -22,7 +21,6 @@ try {
   if (!url.includes('git+pear://')) {
     const urlIdx = argv.findIndex((arg) => arg.startsWith('git+pear://'))
     url = argv[urlIdx]
-    remote = argv[urlIdx - 1]
 
     if (!url) {
       console.error('Remote url could not be found in args')
@@ -30,8 +28,7 @@ try {
     }
   }
 
-  const link = GitPearLink.parse(url)
-  config = { key: link.drive.key, name: link.repo, length: link.drive.length }
+  config.link = url
 } catch (error) {
   throw new Error(`Invalid remote url: ${url}: ${error.message}`)
 }
@@ -43,20 +40,20 @@ const capabilities = () => {
 const main = async () => {
   const crlfDelay = 30000
 
-  const punch = new PunchGit({
+  const gip = new Gip({
     remote,
     ...config
   })
 
   goodbye(async () => {
-    await punch.close()
+    await gip.close()
   })
 
-  punch.setProgress(true)
+  gip.setProgress(true)
 
-  punch._progressReporter.punching()
-  await punch.ready()
-  punch._progressReporter.punched(punch.remote)
+  gip._progressReporter.connecting()
+  await gip.ready()
+  gip._progressReporter.connected(gip.remote)
 
   try {
     for await (const line of readline.createInterface({
@@ -64,7 +61,7 @@ const main = async () => {
       crlfDelay
     })) {
       const command = line.split(' ')[0]
-      punch._verbose('Line: ' + line)
+      gip._verbose('Line: ' + line)
 
       switch (command) {
         case 'capabilities':
@@ -75,16 +72,16 @@ const main = async () => {
             const option = line.split(' ')[1]
             switch (option) {
               case 'verbosity':
-                punch.setVerbosity(line.split(' ')[2])
+                gip.setVerbosity(line.split(' ')[2])
                 break
               case 'progress':
-                punch.setProgress(line.split(' ')[2] === 'true')
+                gip.setProgress(line.split(' ')[2] === 'true')
                 break
               case 'cloning':
-                punch.setCloning(line.split(' ')[2] === 'true')
+                gip.setCloning(line.split(' ')[2] === 'true')
                 break
               case 'followtags':
-                punch.setFollowTags(line.split(' ')[2] === 'true')
+                gip.setFollowTags(line.split(' ')[2] === 'true')
                 break
             }
             process.stdout.write('ok\n')
@@ -92,27 +89,27 @@ const main = async () => {
           break
         case 'list': {
           if (line === 'list') {
-            await punch.listAndStoreRefs()
+            await gip.listAndStoreRefs()
           } else {
-            await punch.listForPush()
+            await gip.listForPush()
           }
           break
         }
         case 'push': {
           const ref = line.split(' ')[1]
-          await punch.addPushRefs(ref)
+          await gip.addPushRefs(ref)
           break
         }
         case 'fetch': {
-          punch.prepareFetch(line.replace('fetch ', ''))
+          gip.prepareFetch(line.replace('fetch ', ''))
           break
         }
         case '': {
-          if (punch.hasPendingFetch()) {
-            await punch.fetch()
+          if (gip.hasPendingFetch()) {
+            await gip.fetch()
           } else {
-            punch._debug('pushing')
-            await punch.push()
+            gip._debug('pushing')
+            await gip.push()
           }
           return
         }
@@ -121,8 +118,8 @@ const main = async () => {
       }
     }
   } finally {
-    punch._debug('Closing punch')
-    await punch.close()
+    gip._debug('Closing gip')
+    await gip.close()
     process.exit(0)
   }
 }

@@ -1,14 +1,14 @@
-const { PunchLocalDB } = require('./lib/db/index.js')
-const GitPearLink = require('./lib/link.js')
+const { GipLocalDB } = require('./lib/db/index.js')
+const { GitPearLink } = require('gip-remote')
 
-const url = 'git+pear://somez32encodedkey/punch'
+const url = 'git+pear://somez32encodedkey/example'
 const config = GitPearLink.parse(url)
 
-const local = new PunchLocalDB()
+const local = new GipLocalDB()
 
 const main = async () => {
   await local.ready()
-  const remote = await local.joinRemote(config.name, config.key)
+  const remote = await local.openRemote(url)
 
   console.log(remote.availablePeers)
   console.log(remote.core)

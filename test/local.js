@@ -4,9 +4,9 @@ const Hyperswarm = require('hyperswarm')
 const tmp = require('test-tmp')
 const Corestore = require('corestore')
 
-const { PunchLocalDB } = require('../lib/db')
-const { parseCommit, walkTree } = require('../lib/db/remote2')
-const GitPearLink = require('../lib/link')
+const { GipLocalDB } = require('../lib/db')
+const { parseCommit, walkTree } = require('gip-remote')
+const { GitPearLink } = require('gip-remote')
 
 // --- Helpers ---
 
@@ -112,7 +112,7 @@ test('parseCommit handles no parent', (t) => {
 test('createRemote and getRepo', async (t) => {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const db = new PunchLocalDB({
+  const db = new GipLocalDB({
     swarm: new Hyperswarm({ bootstrap }),
     store: await createStore(t)
   })
@@ -132,7 +132,7 @@ test('createRemote and getRepo', async (t) => {
 test('push stores objects, branch, and files', async (t) => {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const db = new PunchLocalDB({
+  const db = new GipLocalDB({
     swarm: new Hyperswarm({ bootstrap }),
     store: await createStore(t)
   })
@@ -166,7 +166,7 @@ test('push stores objects, branch, and files', async (t) => {
 test('toDrive lists files and reads content', async (t) => {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const db = new PunchLocalDB({
+  const db = new GipLocalDB({
     swarm: new Hyperswarm({ bootstrap }),
     store: await createStore(t)
   })
@@ -199,7 +199,7 @@ test('toDrive lists files and reads content', async (t) => {
 test('drive entry returns correct metadata', async (t) => {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const db = new PunchLocalDB({
+  const db = new GipLocalDB({
     swarm: new Hyperswarm({ bootstrap }),
     store: await createStore(t)
   })
@@ -226,7 +226,7 @@ test('drive entry returns correct metadata', async (t) => {
 test('drive readdir returns immediate children', async (t) => {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const db = new PunchLocalDB({
+  const db = new GipLocalDB({
     swarm: new Hyperswarm({ bootstrap }),
     store: await createStore(t)
   })
@@ -253,7 +253,7 @@ test('drive readdir returns immediate children', async (t) => {
 test('getBranchRef returns null for missing branch', async (t) => {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const db = new PunchLocalDB({
+  const db = new GipLocalDB({
     swarm: new Hyperswarm({ bootstrap }),
     store: await createStore(t)
   })
@@ -270,7 +270,7 @@ test('getBranchRef returns null for missing branch', async (t) => {
 test('toDrive returns null for missing branch', async (t) => {
   const { bootstrap } = await createTestnet(3, t.teardown)
 
-  const db = new PunchLocalDB({
+  const db = new GipLocalDB({
     swarm: new Hyperswarm({ bootstrap }),
     store: await createStore(t)
   })

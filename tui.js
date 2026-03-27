@@ -1,11 +1,11 @@
 const { header, summary, command, validate, arg } = require('paparam')
-const { PunchLocalDB } = require('./lib/db')
+const { GipLocalDB } = require('./lib/db')
 const goodbye = require('graceful-goodbye')
 const process = require('process')
 
 const green = (text) => `\x1b[32m${text}\x1b[0m`
 
-const db = new PunchLocalDB()
+const db = new GipLocalDB()
 
 goodbye(async () => {
   await db.close()
@@ -16,7 +16,7 @@ const regexRepoName = /^[a-zA-Z0-9_-]+$/
 const newRepo = command(
   'new',
   header('Create a new repository'),
-  summary('Create a new Git repository using Git Remote Punch'),
+  summary('Create a new Git repository using Gip'),
   arg('name', 'Name of the repository'),
   validate(
     ({ args }) => args.name && regexRepoName.test(args.name),
@@ -73,9 +73,9 @@ const seedRemotes = command(
 )
 
 const cmd = command(
-  'punch',
+  'gip',
   header('Git Remote the P2P way'),
-  summary('Git Remote Punch allows you to manage your Git repositories. No servers, just Peers.'),
+  summary('Gip allows you to manage your Git repositories. No servers, just Peers.'),
   newRepo,
   listRepos,
   seedRemotes,

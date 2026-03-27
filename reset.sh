@@ -1,8 +1,8 @@
 #!/bin/sh
 
-rm -rf ~/.punch
+rm -rf ~/.gip
 remote=$(./bin-tui.js new git-remote | tr ' ' '\n' | tail -1)
 echo $remote
 
-git remote remove punch || echo 'OK'
-git remote add punch $remote
+git remote remove gip || echo 'OK'
+git remote add gip $remote

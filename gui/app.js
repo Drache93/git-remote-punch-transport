@@ -6,7 +6,7 @@ const { join } = require('bare-path')
 const { HTMLServer } = require('cellery-html')
 const { Text } = require('cellery')
 
-const { PunchLocalDB } = require('../lib/db')
+const { GipLocalDB } = require('../lib/db')
 
 const target = require('#target')
 const { Repo, FileTree, FileContent, RepoHeader, BackButton } = require('./cells')
@@ -14,8 +14,8 @@ const { app } = require('./views/main')
 const { Transform } = require('streamx')
 
 const console = new Console()
-const store = new Corestore(join(homedir(), '.punch'))
-const db = new PunchLocalDB({ store })
+const store = new Corestore(join(homedir(), '.gip'))
+const db = new GipLocalDB({ store })
 
 Error.stackTraceLimit = 100
 

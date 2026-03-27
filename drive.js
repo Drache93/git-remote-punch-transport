@@ -2,10 +2,10 @@ const Corestore = require('corestore')
 const Localdrive = require('localdrive')
 const { homedir } = require('bare-os')
 const { join } = require('bare-path')
-const { PunchLocalDB } = require('./lib/db')
+const { GipLocalDB } = require('./lib/db')
 
-const store = new Corestore(join(homedir(), '.punch'))
-const db = new PunchLocalDB({ store })
+const store = new Corestore(join(homedir(), '.gip'))
+const db = new GipLocalDB({ store })
 
 async function main() {
   await db.ready()
