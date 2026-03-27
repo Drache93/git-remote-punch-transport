@@ -1,6 +1,6 @@
 {
   "name": "git-remote-punch",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Git over holepunch remote helper.",
   "bin": {
     "git-remote-git+pear": "bin.js",
@@ -96,7 +96,6 @@
     "gip-remote": "^1.0.2",
     "graceful-goodbye": "^1.3.3",
     "hyperbee2": "^2.7.1",
-    "hypercore": "^11.16.1",
     "hypercore-id-encoding": "^1.3.0",
     "hyperdb": "^6.3.0",
     "hyperschema": "^1.20.1",
@@ -104,7 +103,6 @@
     "keet-identity-key": "^3.1.0",
     "mirror-drive": "^1.13.0",
     "paparam": "^1.8.6",
-    "pear-link": "^4.2.1",
     "protomux-wakeup": "^2.6.1",
     "ready-resource": "^1.1.2",
     "rebuild-git": "^1.0.0",
