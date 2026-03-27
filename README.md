@@ -1,40 +1,46 @@
-# Punch Git
+# Gip Transport
 
-Git remote helper P2P remote - no server, just peers
+Git remote helper for P2P remotes — no server, just peers.
+
+Uses [gip-remote](https://github.com/holepunchto/gip-remote) for the underlying Git-in-Pear database.
 
 ## Installation
 
 Install the git remote helper globally:
 
 ```bash
-npm i -g https://github.com/Drache93/git-remote-punch-transport
+npm i -g git-remote-gip
 ```
 
-This installs `git-remote-punch` which git will automatically use when accessing punch:// remotes.
+This installs `git-remote-gip` which git will automatically use when accessing `git+pear://` remotes.
 
 ## Usage
 
-### Running the UI
-
-Start the user interface with:
+### Creating a Repository
 
 ```bash
-pear run pear://cgnph3qsrfk55pcpzyd3ab7rheqd9jjcxfam3ypmu9989q1xk3zy
+gip new my-repo
 ```
 
 ### Adding a Remote
 
-Add a test remote with:
-
 ```bash
-git remote add punch punch://<any value>
+git remote add origin git+pear://<key>/my-repo
 ```
 
-The `<any-value>` will be replaced with a public key for your repo soon.
+### Push & Fetch
+
+Works like any git remote:
+
+```bash
+git push origin main
+git fetch origin
+git clone git+pear://<key>/my-repo
+```
 
 ### Progress Output
 
-The transport provides git-like progress output during push and fetch operations, showing:
+The transport provides git-like progress output during push and fetch operations:
 
 - **Enumerating objects**: Counts objects being prepared for transfer
 - **Writing objects**: Shows percentage complete, object count, data size, and transfer rate
@@ -43,33 +49,26 @@ The transport provides git-like progress output during push and fetch operations
 Example push output:
 
 ```
-Punching... Punched! Found 2 peers
-⠙ Enumerating objects: 42
+Connecting... Connected! Found 2 peers
 ✔ Enumerating objects: 42, done.
-⠙ Writing objects: 75% (32/42) [===============     ] 1.2 MiB
 ✔ Writing objects: 100% (42/42), 1.6 MiB | 245.3 KiB/s, done.
 ```
 
-Progress output is enabled by default and uses `yocto-spinner` for smooth visual feedback. All progress messages are written to `process.stderr` to avoid interfering with the git protocol communication on stdout.
+Progress is written to stderr to avoid interfering with git protocol communication on stdout.
 
 ## Development
 
-Quick setup for testing, link the file to a folder on your path so you can use with git:
+Link the remote helper so git can find it:
 
 ```bash
-sudo ln -s $(pwd)/index.js /usr/local/bin/git-remote-punch
+sudo ln -s $(pwd)/remote.js /usr/local/bin/git-remote-gip
 ```
 
-Git will automatically look for `git-remote-<protocol>` when accessing a remote.
+Git automatically looks for `git-remote-<protocol>` when accessing a remote.
 
 ## ToDo
 
-- [ ] Ensure natural object ordering is replicated in core
-- [ ] Mult-writer
+- [ ] Multi-writer
 - [ ] Access management
-- [x] Deduplication - Objects are not pushed if they already exist on the remote
-- [x] In memory git packing - uses `isomorphic-git` to rebuild the repo from the stored objects
-
-## Note
-
-This is an early development release and is not yet optimized for efficiency.
+- [x] Deduplication — objects are not pushed if they already exist on the remote
+- [x] In-memory git packing via rebuild-git
